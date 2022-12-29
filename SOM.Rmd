@@ -22,24 +22,30 @@ text-align: justify}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# R Markdown
+# Algoritma Self Organizing Map
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents [@deCarvalho2012]. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+Self Organising Map (SOM) merupakan suatu tipe Artificial Neural Networks yang ditraining secara unsupervised. SOM menghasilkan map yang terdiri dari output dalam dimensi yang rendah (2 atau 3 dimensi). Bertujuan untuk mengklasifikasikan suatu vektor-vektor input berdasarkan bagaimana mereka mengelompok sesuai dengan karakteristik inputnya. Komposisi input dan output dalam SOM mirip dengan komposisi dari proses feature scaling (multidimensional scaling). Walaupun proses learning yang dilakukan mirip dengan Artificial Neural Networks, tetapi proses untuk meng-assign input data ke map, lebih mirip dengan K-Means dan KNN Algorithm.
 
-```{r cars}
-summary(cars)
+
+
+# Tahapan alogoritma SOM
+##library
+```{r}
+library(kohonen)
+library(class)
+library(MASS)
+
+datasom<-read.excel("This PC://self organizing map/excel")
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
+# Eksperimen algoritma SOM
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+# Refrensi
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
-# Referensi
+
+
+
+
