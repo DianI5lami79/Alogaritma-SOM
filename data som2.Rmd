@@ -1,7 +1,7 @@
 ---
-title: "Alogaritma SOM Dengan R"
+title: "ALGORITMA SELF ORGANIZING MAP"
 date: "`r Sys.Date()`"
-author: Dian islamiati Dahlan-Institut Teknologi Statistika dan Bisnis Muhammadiyah
+author: DIAN ISLAMIATI DAHLAN-Institut Teknologi Statistika dan Bisnis Muhammadiyah
 output:
   rmdformats::readthedown:
     self_contained: true
@@ -21,16 +21,17 @@ text-align: justify}
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-# Algoritma Self Organizing Map
+# ALGORITMA SELF ORGANIZING MAP
 
 
 Self Organising Map (SOM) merupakan suatu tipe Artificial Neural Networks yang ditraining secara unsupervised. SOM menghasilkan map yang terdiri dari output dalam dimensi yang rendah (2 atau 3 dimensi). Bertujuan untuk mengklasifikasikan suatu vektor-vektor input berdasarkan bagaimana mereka mengelompok sesuai dengan karakteristik inputnya. Komposisi input dan output dalam SOM mirip dengan komposisi dari proses feature scaling (multidimensional scaling). Walaupun proses learning yang dilakukan mirip dengan Artificial Neural Networks, tetapi proses untuk meng-assign input data ke map, lebih mirip dengan K-Means dan KNN Algorithm.
 
 
 
-# Tahapan Algoritma SOM
- 1. Mengambil data dari beberapa data iris
+# TAHAPAN ALGORITMA SELF ORGANIZING MAP
+
+
+1. Mengambil data dari beberapa data iris
  2. Inisialisasi	bobot	input	dan	aoutput	den
  3. Menghitung	Jarak	D(j)	antara	vector	input	dan  output dengan rumus              𝐷_((𝑗) )=∑(𝑖=0)^𝑛〖(𝑤_𝑖𝑗−𝑥_𝑖)²〗(1)
  4. Mencari nilai terkecil dari seluruh bobot D(j). Index  dari bobot D(j) yang paling   kecil disebut winning  neuron.
@@ -40,98 +41,48 @@ wij(𝑏𝑎𝑟𝑢) = wij (𝑙𝑎𝑚𝑎) + 𝑎[xi − wij (𝑙𝑎𝑚�
   7. Mengulangi Lagkah 6-7 hingga mencapai iterasi.  Maksimal kondisi pemberhentian	wij	hanya  berubah sedikit saja, berhenti iterasi sudah  mencapai konvergen sehingga dapat di hentikan.
 
 
- 
-# Eksperimen Algoritma SOM
-##library
+# EKSPERIMEN SELF ORGANIZING MAP
+
 ```{r warning=FALSE}
-library(kohonen)
 library(class)
 library(MASS)
+library(kohonen)
 ```
-
-
-```{r warning=FALSE}
-#Setelah itu kita panggil sesuai dengan command berikut
-
+```{r}
+#Setelah itu kita panggil sesuai dengan command berikut,
 library(readxl)
-self_organizing_map <- read_excel("~/SOM/self organizing map.xlsx")
-View(self_organizing_map)
+data_som <- read_excel("data som.xlsx")
+View(data_som)
 ```
-
-
-```{r warning=FALSE}
-'data_somlatih'
-
-```
-
-
-```{r warning=FALSE}
-"data_somlatih <-data_som [,c (2,3)]"
-```
-
-
-```{r warning=FALSE}
+```{r}
+#kita berikan nama yang sama di dalam R yakni ‘datasom’. Kemudian kita panggil data tersebut
 data_som
 ```
-
-
-```{r warning=FALSE}
-plot(self_organizing_map,cex = 0)
-text(self_organizing_map,labels = self_organizing_map$'Name',cex = 1)
-```
-
-
-```{r warning=FALSE}
-plot(self_organizing_map,cex=0)
-text(self_organizing_map,labels = self_organizing_map$Name,cex = 1)
-```
-
-
-```{r warning=FALSE}
-gridself_organizing_map <- somgrid(xdim = 2,ydim = 2, topo = "hexagonal")
-
-"Map(self_organizing_map) <- SOM(self_organizing_map),grit=gridself_organizing_map"
-
-plot ((x = self_organizing_map), y = self_organizing_map, Type1Font = ("mapping"))
-
-'mapself_organizing_map'
-
+```{r}
+#tanpa menghilangkan urutan, variabel “Name” dalam kasus ini akan kita sembunyikan terlebih dahulu.
+data_somlatih<-data_som[,c(3,4)]
 ```
 ```{r}
-## som map of size 2x2 with a hexagonal topology.
-## Training data included.
-```
-
-
-```{r}
-str(self_organizing_map)
-
-"map'self_organizing_map$grid$pts'"
-```
-
-
-```{r}
-"(mapself_organizing_map)unit.classif"
+#kemudian kita panggil kembali data tersebut
+data_somlatih
 ```
 ```{r}
-## [1] 3 1 2 4
+#kemudian kita visualisasi dari object-object tersebut,
+plot.default(data_somlatih,cex=0.01)
+text(data_somlatih,labels=data_som$Name,cex=1)
 ```
 ```{r}
-plot.default(self_organizing_map)
+#nampak dari gambar diatas nilai sumbu X dan sumbu Y berada pada rentang yang sangat berbeda. Sehingga nilai-nilai tersebut dapat dibuat dalam rentang yang berdekatan
+
+data_somlatih <-scale(data_somlatih)
 ```
 ```{r}
-"map(self_organizing_map)$map)"
-```
-```{r}
-self_organizing_mapbaru <- 'self_organizing_mapbaru'
-("B, C, A, D")
-```
-```{r}
-("mapself_organizing_map")
-"text(mapself_organizing_map)$grid$pts,labels=self_organizing_mapbaru$Name, cex=2)"
+#datasomlatih kita buat dengan nama yang sama, kemudian kita coba untuk plot ulang
+plot.default(data_somlatih,cex=0.01)
+text(data_somlatih,labels=data_som$Name,cex=1)
 ```
 
-# Refrensi
-https://rpubs.com/fajriyahakim/291575
 
 
+
+# REFRENSI
