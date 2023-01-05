@@ -43,7 +43,7 @@ wij(𝑏𝑎𝑟𝑢) = wij (𝑙𝑎𝑚𝑎) + 𝑎[xi − wij (𝑙𝑎𝑚�
  
 # Eksperimen Algoritma SOM
 ##library
-```{r}
+```{r warning=FALSE}
 library(kohonen)
 library(class)
 library(MASS)
@@ -94,12 +94,21 @@ str(self_organizing_map)
 ```{r}
 ## [1] 3 1 2 4
 ```
-
-
-
-
+```{r}
+plot.default(self_organizing_map)
+```
+```{r}
+"map(self_organizing_map)$map)"
+```
+```{r}
+self_organizing_mapbaru <- 'self_organizing_mapbaru'
+("B, C, A, D")
+```
+("mapself_organizing_map")
+"text(mapself_organizing_map)$grid$pts,labels=self_organizing_mapbaru$Name, cex=2)"
+```
 
 # Refrensi
-
+https://rpubs.com/fajriyahakim/291575
 
 
