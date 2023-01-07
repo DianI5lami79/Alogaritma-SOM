@@ -84,12 +84,11 @@ text(data_somlatih,labels=data_som$Name,cex=1)
 #nampak bahwa nilai sumbu X dan sumbu Y dalam rentang yang sama, serta akan memudahkan kita dalam mengelompokkan ke dalam visualisasi SOM.
 
 #Sementara itu akan kita siapkan terlebih dahulu ‘tempat’ untuk meletakkan object-object ABCD diatas.
-griddata_som<-somgrid(xdim = 2,ydim =2, topo = "hexagonal")
-
+griddata_som<-som grid (xdim = 2, ydim = 2, topo = "hexagonal")
 ```
 ```{r}
 #pada perintah diatas, kita ingin membuatkan tempat untuk keempat object kita ke dalam empat buah lingkaran (xdim = 2 dikali ydim 2 = 4 lingkaran), kemudian kita lakukan pengelompokan dengan SOM,
-"mapdata_som<-data_somlatih,grid=griddata_som"
+mapdata_som<-data_somlatih,grid=griddata_som
 ```
 ```{r}
 plot(data_somlatih, "mapping")
@@ -97,12 +96,20 @@ plot(data_somlatih, "mapping")
 ## Training data included.
 ```
 ```{r}
-"map(data_som)"
+map(data_som)
 ```
 ```{r}
 str( data_som)
 ```
+```{r}
+#Jika ingin mengetahui dititik manakah letak masing-masing pusat lingkaran pada plot diatas? maka dapat kita gunakan perintah berikut,
+map(data_som)$grid$pts
+```
+```{r}
+#kemudian dimanakah letak masing-masing object didalam lingkaran tersebut? bisa kita lihat melalui informasi “$unit.classif”" yang bisa kita panggil seperti berikut,
 
+map(data_som)$unit.classif
+```
 
 
 # REFRENSI
