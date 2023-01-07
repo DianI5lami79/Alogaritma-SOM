@@ -48,14 +48,14 @@ library(class)
 library(MASS)
 library(kohonen)
 ```
-```{r}
+```{r warning=FALSE}
 #Setelah itu kita panggil sesuai dengan command berikut,
 library(readxl)
 data_som <- read_excel("data som.xlsx")
 View(data_som)
 ```
 ```{r}
-#kita berikan nama yang sama di dalam R yakni ‘datasom’. Kemudian kita panggil data tersebut
+#kita berikan nama yang sama di dalam R yakni ‘data_som’. Kemudian kita panggil data tersebut
 data_som
 ```
 ```{r}
@@ -73,15 +73,29 @@ text(data_somlatih,labels=data_som$Name,cex=1)
 ```
 ```{r}
 #nampak dari gambar diatas nilai sumbu X dan sumbu Y berada pada rentang yang sangat berbeda. Sehingga nilai-nilai tersebut dapat dibuat dalam rentang yang berdekatan
-
-data_somlatih <-scale(data_somlatih)
+'data_somlatih<-scale(data_somlatih)'
 ```
 ```{r}
 #datasomlatih kita buat dengan nama yang sama, kemudian kita coba untuk plot ulang
 plot.default(data_somlatih,cex=0.01)
 text(data_somlatih,labels=data_som$Name,cex=1)
 ```
+```{r}
+#nampak bahwa nilai sumbu X dan sumbu Y dalam rentang yang sama, serta akan memudahkan kita dalam mengelompokkan ke dalam visualisasi SOM.
 
+#Sementara itu akan kita siapkan terlebih dahulu ‘tempat’ untuk meletakkan object-object ABCD diatas.
+griddata_somlatih<-griddata_som  (xdim = 2, ydim = 2, topo = "hexagonal")
+```
+```{r}
+#pada perintah diatas, kita ingin membuatkan tempat untuk keempat object kita ke dalam empat buah lingkaran (xdim = 2 dikali ydim 2 = 4 lingkaran), kemudian kita lakukan pengelompokan dengan SOM,
+"mapdata_som<-data_somlatih,grid=griddata_som"
+```
+```{r}
+plot(data_somlatih, "mapping")
+```
+```{r}
+map(data_som)
+```
 
 
 
