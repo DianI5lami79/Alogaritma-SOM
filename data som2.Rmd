@@ -84,7 +84,8 @@ text(data_somlatih,labels=data_som$Name,cex=1)
 #nampak bahwa nilai sumbu X dan sumbu Y dalam rentang yang sama, serta akan memudahkan kita dalam mengelompokkan ke dalam visualisasi SOM.
 
 #Sementara itu akan kita siapkan terlebih dahulu ‘tempat’ untuk meletakkan object-object ABCD diatas.
-griddata_somlatih<-griddata_som  (xdim = 2, ydim = 2, topo = "hexagonal")
+griddata_som<-somgrid(xdim = 2,ydim =2, topo = "hexagonal")
+
 ```
 ```{r}
 #pada perintah diatas, kita ingin membuatkan tempat untuk keempat object kita ke dalam empat buah lingkaran (xdim = 2 dikali ydim 2 = 4 lingkaran), kemudian kita lakukan pengelompokan dengan SOM,
@@ -92,9 +93,14 @@ griddata_somlatih<-griddata_som  (xdim = 2, ydim = 2, topo = "hexagonal")
 ```
 ```{r}
 plot(data_somlatih, "mapping")
+## som map of size 2x2 with a hexagonal topology.
+## Training data included.
 ```
 ```{r}
-map(data_som)
+"map(data_som)"
+```
+```{r}
+str( data_som)
 ```
 
 
