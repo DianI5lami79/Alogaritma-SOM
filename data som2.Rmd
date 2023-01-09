@@ -43,77 +43,281 @@ wij(𝑏𝑎𝑟𝑢) = wij (𝑙𝑎𝑚𝑎) + 𝑎[xi − wij (𝑙𝑎𝑚�
 
 # EKSPERIMEN SELF ORGANIZING MAP
 
+
+PERSIAPAN
+
+Paket dan data
 ```{r warning=FALSE}
-library(class)
-library(MASS)
-library(kohonen)
+library(kohonen) 
+library(ggplot2) 
+library(GGally) 
+library(RColorBrewer) 
+
+#clean slate...:
+rm(list = ls())
+
+iris_complete <-iris[complete.cases(iris),] 
+iris_unique <- unique(iris_complete)
 ```
+Palet
+
+Palet yang bisa kita gunakan nanti.
+
 ```{r warning=FALSE}
-#Setelah itu kita panggil sesuai dengan command berikut,
-library(readxl)
-data_som <- read_excel("~/SOM/data som.xlsx")
-View(data_som)
-```
-```{r}
-#kita berikan nama yang sama di dalam R yakni ‘data_som’. Kemudian kita panggil data tersebut
-data_som
-```
-```{r}
-#tanpa menghilangkan urutan, variabel “Name” dalam kasus ini akan kita sembunyikan terlebih dahulu.
-
-data_somlatih <- data_som[,c (3,4)]
-```
-```{r}
-#kemudian kita panggil kembali data tersebut
-data_somlatih
-```
-```{r}
-#kemudian kita visualisasi dari object-object tersebut,
-plot.default(data_somlatih,cex=0.01)
-text(data_somlatih,labels=data_som$Name,cex=2)
-```
-```{r}
-#nampak dari gambar diatas nilai sumbu X dan sumbu Y berada pada rentang yang sangat berbeda. Sehingga nilai-nilai tersebut dapat dibuat dalam rentang yang berdekatan
-'data_somlatih  <- scale(data_somlatih)'
-```
-```{r}
-#datasomlatih kita buat dengan nama yang sama, kemudian kita coba untuk plot ulang
-plot.default(data_somlatih,cex=0.09)
-text(data_somlatih,labels=data_som$Name,cex=4)
-```
-```{r}
-#nampak bahwa nilai sumbu X dan sumbu Y dalam rentang yang sama, serta akan memudahkan kita dalam mengelompokkan ke dalam visualisasi SOM.
-
-#Sementara itu akan kita siapkan terlebih dahulu ‘tempat’ untuk meletakkan object-object ABCD diatas.
-
-griddata_som<- somgrid(xdim = 2, ydim = 2,topo = "hexagonal" )
-```
-```{r}
-#pada perintah diatas, kita ingin membuatkan tempat untuk keempat object kita ke dalam empat buah lingkaran (xdim = 2 dikali ydim 2 = 4 lingkaran), kemudian kita lakukan pengelompokan dengan SOM,
-
-'map(data_som)<- som (data_somlatih,grid= griddata_som)'
-```
-```{r}
-plot(data_somlatih, "mapping")
-
-```
-```{r}
-'map(data_som)'
-## som map of size 2x2 with a hexagonal topology.
-## Training data included.
-```
-```{r}
-str( data_som)
-```
-```{r}
-#Jika ingin mengetahui dititik manakah letak masing-masing pusat lingkaran pada plot diatas? maka dapat kita gunakan perintah berikut,
-'map(data_som)$grid$pts'
-```
-```{r}
-#kemudian dimanakah letak masing-masing object didalam lingkaran tersebut? bisa kita lihat melalui informasi “$unit.classif”" yang bisa kita panggil seperti berikut,
-
-map(data_som)$unit.classif
+contrast <- c("#FA4925", "#22693E", "#D4D40F", "#2C4382", "#F0F0F0", "#3D3D3D") #milikku, pasangan yang kontras
+kindofpretty <- c("#B39B66", "#3B3828", "#FAE6B9", "#F2F2F2", "#86BA9F", "#135E1F", "#FFF70A", "#FFB10A", "#0498BD", "#FF780A") #my own
+kindofpretty2 <- c("#B39B66", "#3B3828", "#FAE6B9", "#F2F2F2", "#F58B00", "#F5D800", "#7185A3", "#786187") #milikku
+#atau tentukan palet menggunakan RColorBrewer:
 ```
 
 
+```{r}
+display.brewer.all() 
+```
+
+```{r}
+#dan kemudian, misalnya:
+cols <- brewer.pal(10, "Paired")
+#Demikian pula, tetapi fungsi warna yang akan dipanggil dari dalam fungsi lain. Mudah diubah menjadi pelangi, dll.
+terraincolors <- function(n, alpha = 1) {
+  terrain.colors(n, alpha=alpha)[n:1]
+}
+```
+MENJELASKAN DATA
+
+```{r}
+#well, first of all:
+summary(iris_unique)
+```
+
+```{r}
+#Tetapkan atribut untuk dapat mengklasifikasikan variabel (bukan pengamatan) yang kemudian dapat diselidiki menggunakan GGally.
+attr(iris_unique,'Sepal') <- c("Sepal.Length", "Sepal.Width")
+attr(iris_unique,'Petal') <- c("Petal.Length", "Petal.Width")
+str(attributes(iris_unique)) 
+```
+
+```{r}
+(SepalVar <- attr(iris_unique, "Sepal")) #Tentukan kelompok variabel berdasarkan atribut
+```
+```{r}
+(PetalVar <- attr(iris_unique, "Petal"))
+```
+
+```{r}
+# Selanjutnya, lihat korelasi dalam menggunakan ggpairs.
+ggpairs(iris_unique, title = "the whole dataset")
+```
+
+```{r}
+ggpairs(iris_unique, SepalVar, title = "Within Sepal")
+```
+
+```{r}
+ggpairs(iris_unique, PetalVar, title = "Within Petal")
+```
+```{r}
+# Kemudian, lihat korelasi antar menggunakan ggpairs.
+ggduo(
+  iris_unique, SepalVar, PetalVar,
+  types = list(continuous = "smooth_lm"),
+  title = "Korelasi antara variabel Sepal dan Petal",
+  xlab = "Sepal",
+  ylab = "Petal"
+)
+```
+LATIHAN PETA
+
+```{r}
+#scale data
+iris.sc = scale(iris_unique[, 1:4]) #Levels/Factors tidak dapat diskalakan... Tetapi digunakan dalam SOM prediktif menggunakan xyf. Nanti.
+#bangun jaringan
+iris.grid = somgrid(xdim = 10, ydim=10, topo="hexagonal", toroidal = TRUE) #gridsize kira-kira 5-10 sample/node. Heksagonal lebih disukai (lebih banyak tetangga).
+#Oleh karena itu, 10*10 adalah petak yang terlalu besar saat n=150. Tapi kami akan membahasnya di sini untuk tujuan ilustrasi.
+#Dalam peta toroidal, batas di tepi hanya akan ditampilkan di sisi atas dan kanan untuk menghindari batas ganda.
+```
+Peta toroidal memiliki bentuk cincin renang dan pada dasarnya bekerja dengan gaya seperti PacMan - jika Anda melewati batas, Anda akan berakhir di ujung peta yang berlawanan.
+```{r}
+# membangun model
+set.seed(33) #untuk reproduktifitas
+iris.som <- som(iris.sc, grid=iris.grid, rlen=700, alpha=c(0.05,0.01), keep.data = TRUE)
+```
+Apakah ini model yang bagus?
+
+```{r}
+summary(iris.som)
+```
+```{r}
+#menembak pada efisiensi
+#menghubungkan jarak rata-rata antara unit dan simpul terdekat dengan jarak rata-rata antar unit?
+meanD <- mean(iris.som$distances) #mean jarak antara kode dan masing-masing unit terdekat di peta.
+meanunitD <- mean(unit.distances(iris.grid)) #Jarak antar unit memberi kita petunjuk tentang
+#jarak sebelum pemetaan.
+AccountedD <- meanunitD - meanD #MeanD adalah jarak yang "tersisa" saat kita menggunakan peta.
+# Perbedaan antara jarak yang masuk dan yang tersisa saat kita selesai adalah jarak yang telah kita perhitungkan.
+#Jika meandistance adalah 0 (tidak akan pernah terjadi), kami memiliki kecocokan sempurna antara unit dan kode.
+EF <- AccountedD/meanunitD # Bagilah jarak yang diperhitungkan dengan jarak rata-rata sebelum pemetaan.
+#Rasio harus mengatakan sesuatu tentang efisiensi.
+
+meanD
+```
+
+```{r}
+meanunitD
+```
+
+```{r}
+AccountedD
+```
+
+```{r}
+EF#mendekati 1 = baik.
+```
+
+```{r}
+#Mencurigakan bagus? Apakah saya melewatkan sesuatu, atau apakah ini metrik yang baik?
+#Ini benar-benar buta terhadap overfitting (mis. akan, misalnya, selalu meningkat saat kami meningkatkan ukuran kisi).
+```
+
+PLOT
+
+```{r}
+par(mfrow=c(1,1)) #tidak ada plot untuk digabungkan
+par(mar=c(5.1,4.1,4.1,2.1)) #par menyetel atau menyesuaikan parameter plotting. Tidak selalu diperlukan. "mar" = margin.
+plot(iris.som, type="changes") #Yang ini akan menunjukkan jika Anda perlu memanipulasi rlen.
+```
+
+```{r}
+#Menunjukkan jarak rata-rata ke vektor buku kode terdekat selama pelatihan. Saya melihat 3 dataran tinggi:
+#250-370, 430-550 dan 620-700. 
+plot(iris.som, type="count") #Node mana yang memiliki banyak pengamatan?
+```
+
+```{r}
+plot(iris.som, type="dist.neighbours", palette.name=grey.colors, shape = "straight") # #menunjukkan jumlah jarak ke semua tetangga terdekat.
+```
+
+```{r}
+#Jenis visualisasi ini juga dikenal sebagai plot U-matrix. Seharusnya memberi Anda gambaran tentang cara mengelompokkan,
+#karena Unit yang dekat dengan batas kelas diharapkan memiliki jarak rata-rata yang lebih tinggi ke tetangganya.
+#Saya melihat 2-3 kluster/kabupaten (perlu diingat gridnya toroidal).
+plot(iris.som, type="quality", shape = "straight") #mendekati 0 = kualitas bagus.
+```
+
+```{r}
+#menunjukkan jarak rata-rata objek yang dipetakan ke suatu unit ke vektor buku kode unit tersebut.
+#alias kesalahan kuantisasi (qe).
+#Semakin kecil jaraknya, semakin baik objek direpresentasikan oleh vektor buku kode.
+plot(iris.som, type="codes", codeRendering = "stars") #menunjukkan vektor codebook.
+```
+
+```{r}
+plot(iris.som, type="codes", codeRendering = "segments") #default
+```
+
+```{r}
+plot(iris.som, type="codes", codeRendering = "lines")
+```
+
+```{r}
+plot(iris.som, type="mapping", border = "grey")#Jumlah sel kosong yang lebih rendah, SOM yang lebih baik.
+```
+```{r}
+#pretty gradient colors
+colour1 <- tricolor(iris.som$grid)
+plot(iris.som, "mapping", bg = rgb(colour1))
+```
+```{r}
+colour2 <- tricolor(iris.som$grid, phi = c(pi/6, 0, -pi/6))
+plot(iris.som, "mapping", bg = rgb(colour2), shape = "straight")
+```
+```{r}
+colour3 <- tricolor(iris.som$grid, phi = c(pi/6, 0, -pi/6), offset = .5)
+plot(iris.som, "mapping", bg = rgb(colour3), shape = "straight")
+```
+```{r}
+colour4 <- tricolor(iris.som$grid, phi = c(pi/8, 6, -pi/6), offset = 0.1)
+plot(iris.som, "codes", bg = rgb(colour4), shape = "straight")
+```
+```{r}
+#We can go color-crazy here..
+plot(iris.som, "mapping", bg = rgb(colour3), shape = "straight",col=brewer.pal(3,"Dark2")) #unclear what the brewer colors represent. Omit.
+```
+```{r}
+var <- 1 #define the variable to plot
+plot(iris.som, type = "property", property = getCodes(iris.som)[,var], main=colnames(getCodes(iris.som))[var], palette.name=terrain.colors)
+```
+```{r}
+#...and so forth, for var 2-4.
+
+#But more informative:
+#Unscaled plots (i.e., probably easier to relate to)
+var <- 1 #define the variable to plot
+var_unscaled <- aggregate(as.numeric(iris_unique[,var]), by=list(iris.som$unit.classif), FUN=mean, simplify=TRUE)[,2]
+plot(iris.som, type = "property", property=var_unscaled, main=names(iris_unique)[var], shape = "straight", palette.name = terrain.colors)
+```
+#Interactive menu to speed up comparison between maps
+#Can be used to compare the same map from the perspective of different variables and to explore #possible interrelations between variables.
+```{r}
+#plots a variable from the original (iris) data set
+#The below function produces a menu for multiple heatmaps, if a property is chosen.
+#Adapted (ever so slightly) from Shane Lynn, 14-01-2014. http://www.shanelynn.ie/
+
+plotHeatMap <- function(som_model, data, variable=0){    
+#On Mac, this will require working XQuartz installation. Whatever that is.
+  
+  require(dummies)
+  require(kohonen)
+  terraincolors
+  
+  interactive <- TRUE
+  
+  while (interactive == TRUE){
+    
+    if (variable == 0){
+      #show interactive window.
+      color_by_var <- select.list(names(data), multiple=FALSE,
+                                  graphics=TRUE, 
+                                  title="Choose variable to color map by.")
+      #check for user finished.
+      if (color_by_var == ""){ #if user presses Cancel - we quit function        
+        return(TRUE)
+      }
+      interactive <- TRUE
+      color_variable <- data.frame(data[, color_by_var])
+      
+    } else {
+      color_variable <- data.frame(data[, variable])
+      color_by_var <- names(data)[variable]
+      interactive <- FALSE
+    }
+    
+    #if the variable chosen is a string or factor - 
+    #Get the levels and ask the user to choose which one they'd like.
+    
+    if (class(color_variable[,1]) %in% c("character", "factor", "logical")){
+      #want to spread this out into dummy factors - but colour by one of those.
+      temp_data <- dummy.data.frame(color_variable, sep="_")
+      chosen_factor <- select.list(names(temp_data), 
+                                   multiple=FALSE,
+                                   graphics=TRUE, 
+                                   title="Choose level of variable for colouring")
+      color_variable <- temp_data[, chosen_factor]
+      rm(temp_data, chosen_factor)
+      color_by <- color_variable
+    } else {      
+      #impute the missing values with the mean.
+      color_variable[is.na(color_variable[,1]),1] <- mean(color_variable[,1], na.rm=TRUE)
+      #color_by <- capVector(color_variable[,1])
+      #color_by <- scale(color_by)  
+      color_by <- color_variable[,1]
+    }
+    unit_colors <- aggregate(color_by, by=list(som_model$unit.classif), FUN=mean, simplify=TRUE)
+    plot(som_model, type = "property", property=unit_colors[,2], main=color_by_var, palette.name=terraincolors, shape = "straight")    
+  }
+}
+
+par(mfrow=c(2,2)) #Set the matrix to match the no properties to compare.
+
+```
 # REFRENSI
