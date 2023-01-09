@@ -51,7 +51,7 @@ library(kohonen)
 ```{r warning=FALSE}
 #Setelah itu kita panggil sesuai dengan command berikut,
 library(readxl)
-data_som <- read_excel("data som.xlsx")
+data_som <- read_excel("~/SOM/data som.xlsx")
 View(data_som)
 ```
 ```{r}
@@ -60,7 +60,8 @@ data_som
 ```
 ```{r}
 #tanpa menghilangkan urutan, variabel “Name” dalam kasus ini akan kita sembunyikan terlebih dahulu.
-data_somlatih<-data_som[,c(3,4)]
+
+data_somlatih <- data_som[,c (3,4)]
 ```
 ```{r}
 #kemudian kita panggil kembali data tersebut
@@ -69,41 +70,44 @@ data_somlatih
 ```{r}
 #kemudian kita visualisasi dari object-object tersebut,
 plot.default(data_somlatih,cex=0.01)
-text(data_somlatih,labels=data_som$Name,cex=1)
+text(data_somlatih,labels=data_som$Name,cex=2)
 ```
 ```{r}
 #nampak dari gambar diatas nilai sumbu X dan sumbu Y berada pada rentang yang sangat berbeda. Sehingga nilai-nilai tersebut dapat dibuat dalam rentang yang berdekatan
-'data_somlatih<-scale(data_somlatih)'
+'data_somlatih  <- scale(data_somlatih)'
 ```
 ```{r}
 #datasomlatih kita buat dengan nama yang sama, kemudian kita coba untuk plot ulang
-plot.default(data_somlatih,cex=0.01)
-text(data_somlatih,labels=data_som$Name,cex=1)
+plot.default(data_somlatih,cex=0.09)
+text(data_somlatih,labels=data_som$Name,cex=4)
 ```
 ```{r}
 #nampak bahwa nilai sumbu X dan sumbu Y dalam rentang yang sama, serta akan memudahkan kita dalam mengelompokkan ke dalam visualisasi SOM.
 
 #Sementara itu akan kita siapkan terlebih dahulu ‘tempat’ untuk meletakkan object-object ABCD diatas.
-griddata_som<-som grid (xdim = 2, ydim = 2, topo = "hexagonal")
+
+griddata_som<- somgrid(xdim = 2, ydim = 2,topo = "hexagonal" )
 ```
 ```{r}
 #pada perintah diatas, kita ingin membuatkan tempat untuk keempat object kita ke dalam empat buah lingkaran (xdim = 2 dikali ydim 2 = 4 lingkaran), kemudian kita lakukan pengelompokan dengan SOM,
-mapdata_som<-data_somlatih,grid=griddata_som
+
+'map(data_som)<- som (data_somlatih,grid= griddata_som)'
 ```
 ```{r}
 plot(data_somlatih, "mapping")
-## som map of size 2x2 with a hexagonal topology.
-## Training data included.
+
 ```
 ```{r}
-map(data_som)
+'map(data_som)'
+## som map of size 2x2 with a hexagonal topology.
+## Training data included.
 ```
 ```{r}
 str( data_som)
 ```
 ```{r}
 #Jika ingin mengetahui dititik manakah letak masing-masing pusat lingkaran pada plot diatas? maka dapat kita gunakan perintah berikut,
-map(data_som)$grid$pts
+'map(data_som)$grid$pts'
 ```
 ```{r}
 #kemudian dimanakah letak masing-masing object didalam lingkaran tersebut? bisa kita lihat melalui informasi “$unit.classif”" yang bisa kita panggil seperti berikut,
