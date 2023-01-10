@@ -313,17 +313,19 @@ plotHeatMap <- function(som_model, data, variable=0){
 }
 
 par(mfrow=c(2,2)) #Atur matriks agar cocok dengan tidak ada properti untuk dibandingkan.
-
 ```
 
 ```{r}
-#Call the function and go crazy.
 plotHeatMap(iris.som, iris_unique, variable=0) #variable=0 to display the menu.
 ```
+
+
+
 CLUSTERING DI ATAS SOM
 Sekarang untuk pengelompokan. Kami mengelompokkan kode, bukan unit. Idenya adalah (seperti yang saya pahami) dengan menggunakan SOM kita dapat membuat materi yang sangat kompleks menjadi relatif sederhana sehingga cocok untuk pendekatan yang lebih mudah seperti pengelompokan hierarkis atau k-means. Pilihannya adalah lebih bergantung pada output SOM, yang awalnya dipandu oleh "punggungan" di matriks-U (jarak tetangga), tetapi selanjutnya juga oleh plot properti.
 pengelompokan k-mean
 Menilai jumlah cluster yang sesuai
+
 ```{r}
 par(mfrow=c(1,1)) # kembali ke satu petak
 clusterdata <- getCodes(iris.som)
@@ -345,6 +347,7 @@ iris_unique$clustersKm <- cl_assignmentk #back to original data.
 
 Pengelompokan aglomeratif (bottom up) hirarkis (HAC)
 Cluster dan nilai no cluster yang sesuai, potong cluster menjadi k grup dan laporkan hasilnya ke dataset asli
+
 ```{r}
 #2a. Create distance matrix
 DistanceM <- dist(clusterdata[,1:4], method = "euclidean") #create the distance matrix
