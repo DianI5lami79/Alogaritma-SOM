@@ -23,9 +23,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 # ALGORITMA SELF ORGANIZING MAP
 
+Self-organizing maps (SOM) merupakan suatu jenis artificial neural network yang dilatih dengan metode unsupervised learning. Jaringan ini mampu menghasilkan sebuah representasi terpisah atas ruang input sampel pelatihan dengan dimensi rendah (biasanya dua dimensi). Representasi tersebut kemudian disebut sebagai “map”. SOM juga merupakan metode untuk melakukan pengurangan dimensi pada sampel yang dilatih.
 
-Self Organising Map (SOM) merupakan suatu tipe Artificial Neural Networks yang ditraining secara unsupervised. SOM menghasilkan map yang terdiri dari output dalam dimensi yang rendah (2 atau 3 dimensi). Bertujuan untuk mengklasifikasikan suatu vektor-vektor input berdasarkan bagaimana mereka mengelompok sesuai dengan karakteristik inputnya. Komposisi input dan output dalam SOM mirip dengan komposisi dari proses feature scaling (multidimensional scaling). Walaupun proses learning yang dilakukan mirip dengan Artificial Neural Networks, tetapi proses untuk meng-assign input data ke map, lebih mirip dengan K-Means dan KNN Algorithm.
-
+Gagasan mengenai SOM pertama kali dicetuskan oleh Teuvo Kohonen, seorang peneliti di bidang Ilmu Komputer. Kohonen menciptakan SOM berbeda dari ANN jenis lainnya. Sebab, SOM menerapkan metode pembelajaran kompetitif alih-alih pembelajaran koreksi kesalahan. Jaringan ini juga menerapkan fungsi neighbourhood untuk melestarikan sifat topologi dari ruang input.
 
 
 # TAHAPAN ALGORITMA SELF ORGANIZING MAP
@@ -53,7 +53,6 @@ library(ggplot2)
 library(GGally) 
 library(RColorBrewer) 
 
-#bersihkan batu tulis...:
 rm(list = ls())
 
 iris_complete <-iris[complete.cases(iris),] 
@@ -89,6 +88,7 @@ MENJELASKAN DATA
 ```{r}
 #well, first of all:
 summary(iris_unique)
+View(iris)
 ```
 
 ```{r}
@@ -96,6 +96,7 @@ summary(iris_unique)
 attr(iris_unique,'Sepal') <- c("Sepal.Length", "Sepal.Width")
 attr(iris_unique,'Petal') <- c("Petal.Length", "Petal.Width")
 str(attributes(iris_unique)) 
+View(iris_unique)
 ```
 
 ```{r}
@@ -162,16 +163,6 @@ EF <- AccountedD/meanunitD # Bagilah jarak yang diperhitungkan dengan jarak rata
 
 meanD
 ```
-
-```{r}
-meanunitD
-```
-
-```{r}
-AccountedD
-```
-
-```{r}
 EF#mendekati 1 = baik.
 ```
 
@@ -241,31 +232,33 @@ colour4 <- tricolor(iris.som$grid, phi = c(pi/8, 6, -pi/6), offset = 0.1)
 plot(iris.som, "codes", bg = rgb(colour4), shape = "straight")
 ```
 ```{r}
-#We can go color-crazy here..
+#Kita bisa menjadi gila warna di sini..
 plot(iris.som, "mapping", bg = rgb(colour3), shape = "straight",col=brewer.pal(3,"Dark2")) #unclear what the brewer colors represent. Omit.
 ```
 ```{r}
-var <- 1 #define the variable to plot
+var <- 1#definisikan variabel untuk diplot
 plot(iris.som, type = "property", property = getCodes(iris.som)[,var], main=colnames(getCodes(iris.som))[var], palette.name=terrain.colors)
 ```
 ```{r}
-#...and so forth, for var 2-4.
+#...dan seterusnya, untuk var 2-4.
 
-#But more informative:
-#Unscaled plots (i.e., probably easier to relate to)
+#Tapi lebih informatif:
+#Plot yang tidak diskalakan (yaitu, mungkin lebih mudah dihubungkan)
 var <- 1 #define the variable to plot
 var_unscaled <- aggregate(as.numeric(iris_unique[,var]), by=list(iris.som$unit.classif), FUN=mean, simplify=TRUE)[,2]
 plot(iris.som, type = "property", property=var_unscaled, main=names(iris_unique)[var], shape = "straight", palette.name = terrain.colors)
 ```
-#Interactive menu to speed up comparison between maps
-#Can be used to compare the same map from the perspective of different variables and to explore #possible interrelations between variables.
+
+Menu interaktif untuk mempercepat perbandingan antar peta
+Dapat digunakan untuk membandingkan peta yang sama dari perspektif variabel yang berbeda dan untuk mengeksplorasi kemungkinan keterkaitan antar variabel.
+
 ```{r}
-#plots a variable from the original (iris) data set
-#The below function produces a menu for multiple heatmaps, if a property is chosen.
-#Adapted (ever so slightly) from Shane Lynn, 14-01-2014. http://www.shanelynn.ie/
+#plot variabel dari kumpulan data asli (iris).
+#Fungsi di bawah menghasilkan menu untuk beberapa peta panas, jika sebuah properti dipilih.
+#Diadaptasi (sedikit sekali) dari Shane Lynn, 14-01-2014. http://www.shanelynn.ie/
 
 plotHeatMap <- function(som_model, data, variable=0){    
-#On Mac, this will require working XQuartz installation. Whatever that is.
+#Di Mac, ini membutuhkan penginstalan XQuartz yang berfungsi. Apapun itu.
   
   require(dummies)
   require(kohonen)
@@ -276,12 +269,13 @@ plotHeatMap <- function(som_model, data, variable=0){
   while (interactive == TRUE){
     
     if (variable == 0){
-      #show interactive window.
+      #tampilkan jendela interaktif.
       color_by_var <- select.list(names(data), multiple=FALSE,
                                   graphics=TRUE, 
-                                  title="Choose variable to color map by.")
-      #check for user finished.
-      if (color_by_var == ""){ #if user presses Cancel - we quit function        
+                                  title="Pilih variabel untuk mewarnai peta.")
+     #periksa apakah pengguna sudah selesai.
+      if (color_by_var == ""){ #jika pengguna menekan Batal - kami keluar dari fungsi
+      
         return(TRUE)
       }
       interactive <- TRUE
@@ -293,16 +287,16 @@ plotHeatMap <- function(som_model, data, variable=0){
       interactive <- FALSE
     }
     
-    #if the variable chosen is a string or factor - 
-    #Get the levels and ask the user to choose which one they'd like.
+    #jika variabel yang dipilih adalah string atau faktor -
+    #Dapatkan level dan minta pengguna untuk memilih mana yang mereka suka.
     
     if (class(color_variable[,1]) %in% c("character", "factor", "logical")){
-      #want to spread this out into dummy factors - but colour by one of those.
+      #ingin menyebarkan ini ke faktor dummy - tetapi warnai dengan salah satunya.
       temp_data <- dummy.data.frame(color_variable, sep="_")
       chosen_factor <- select.list(names(temp_data), 
                                    multiple=FALSE,
                                    graphics=TRUE, 
-                                   title="Choose level of variable for colouring")
+                                   title="Pilih tingkat variabel untuk pewarnaan")
       color_variable <- temp_data[, chosen_factor]
       rm(temp_data, chosen_factor)
       color_by <- color_variable
@@ -318,7 +312,58 @@ plotHeatMap <- function(som_model, data, variable=0){
   }
 }
 
-par(mfrow=c(2,2)) #Set the matrix to match the no properties to compare.
+par(mfrow=c(2,2)) #Atur matriks agar cocok dengan tidak ada properti untuk dibandingkan.
 
 ```
+
+```{r}
+#Call the function and go crazy.
+plotHeatMap(iris.som, iris_unique, variable=0) #variable=0 to display the menu.
+```
+CLUSTERING DI ATAS SOM
+Sekarang untuk pengelompokan. Kami mengelompokkan kode, bukan unit. Idenya adalah (seperti yang saya pahami) dengan menggunakan SOM kita dapat membuat materi yang sangat kompleks menjadi relatif sederhana sehingga cocok untuk pendekatan yang lebih mudah seperti pengelompokan hierarkis atau k-means. Pilihannya adalah lebih bergantung pada output SOM, yang awalnya dipandu oleh "punggungan" di matriks-U (jarak tetangga), tetapi selanjutnya juga oleh plot properti.
+pengelompokan k-mean
+Menilai jumlah cluster yang sesuai
+```{r}
+par(mfrow=c(1,1)) # kembali ke satu petak
+clusterdata <- getCodes(iris.som)
+wss <- (nrow(clusterdata)-1)*sum(apply(clusterdata,2,var))
+for (i in 1:15) wss[i] <- sum(kmeans(clusterdata,
+                                     centers=i)$withinss) #i berkisar dari 1 hingga no node -1...
+par(mar=c(5.1,4.1,4.1,2.1)) #par menyetel atau menyesuaikan parameter plotting. Tidak selalu diperlukan. "mar" = margin.
+plot(1:15, wss, type="b", xlab="Jumlah cluster", #match i
+     ylab="Dalam kelompok jumlah kuadrat", main="Di dalam cluster sum of squares (WCSS)")
+```
+Kelompokkan dan laporkan hasil ke kumpulan data asli
+```{r}
+set.seed(33) #for reproducability
+fit_kmeans <- kmeans(clusterdata[,1:4], 3) #3 clusters are used, as indicated by the wss development.
+cl_assignmentk <- fit_kmeans$cluster[iris.som$unit.classif] #we have 100 (since grid=10*10) codes with asigned clusters,
+#but we have 149 units. The above is to assign units to clusters based on their class-id (code-id) in the SOM model.
+iris_unique$clustersKm <- cl_assignmentk #back to original data.
+```
+
+Pengelompokan aglomeratif (bottom up) hirarkis (HAC)
+Cluster dan nilai no cluster yang sesuai, potong cluster menjadi k grup dan laporkan hasilnya ke dataset asli
+```{r}
+#2a. Create distance matrix
+DistanceM <- dist(clusterdata[,1:4], method = "euclidean") #create the distance matrix
+fit_hac <- hclust(DistanceM, method="ward.D2") #fit the distances. "D2", since "DistanceM" is not squared.
+plot(fit_hac) #display dendrogram. To me, it looks like a 5 or 6 cluster solution.
+#in my world 3-5 clusters
+HACgroups <- cutree(fit_hac, k=3) # cut tree into k clusters
+# draw dendrogram with red borders around the 6 clusters 
+rect.hclust(fit_hac, k=3, border="grey")
+```
+
+```{r}
+cl_assignmenth <- HACgroups[iris.som$unit.classif] #we have 100 (since grid=10*10) codes with asigned clusters,
+#but we have 149 units. The above is to assign units to clusters based on their class-id (code-id) in the SOM model.
+iris_unique$clustersHac <- cl_assignmenth #back to original data.
+```
+
+
 # REFRENSI
+1.https://algorit.ma/blog/self-organizing-maps-som-2022/
+2.https://www.researchgate.net/publication/331741192_Self_Organizing_MapsSOM_untuk_Pengelompokkan_Jurusan_di_SMK
+3.https://rpubs.com/loveb/som
