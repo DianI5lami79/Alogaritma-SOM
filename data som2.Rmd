@@ -30,7 +30,6 @@ Gagasan mengenai SOM pertama kali dicetuskan oleh Teuvo Kohonen, seorang penelit
 
 # TAHAPAN ALGORITMA SELF ORGANIZING MAP
 
-
 1. Mengambil data dari beberapa data iris
  2. Inisialisasi	bobot	input	dan	aoutput	den
  3. Menghitung	Jarak	D(j)	antara	vector	input	dan  output dengan rumus              𝐷_((𝑗) )=∑(𝑖=0)^𝑛〖(𝑤_𝑖𝑗−𝑥_𝑖)²〗(1)

@@ -1,0 +1,74 @@
+---
+title: "Algoritma SOM"
+date: "`r Sys.Date()`"
+author: Dian Islamiati Dahlan-Institut Teknologi Statistika dan Bisnis Muhammadiyah
+output:
+  rmdformats::downcute:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    gallery: false
+    highlight: tango
+bibliography: references.bib
+---
+
+```{=html}
+<style>
+body{
+text-align: justify}
+</style>
+```
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# ALGORITMA SELF ORGANIZING MAP
+
+Self-organizing maps (SOM) merupakan suatu jenis artificial neural network yang dilatih dengan metode unsupervised learning. Jaringan ini mampu menghasilkan sebuah representasi terpisah atas ruang input sampel pelatihan dengan dimensi rendah (biasanya dua dimensi). Representasi tersebut kemudian disebut sebagai “map”. SOM juga merupakan metode untuk melakukan pengurangan dimensi pada sampel yang dilatih.
+
+Gagasan mengenai SOM pertama kali dicetuskan oleh Teuvo Kohonen, seorang peneliti di bidang Ilmu Komputer. Kohonen menciptakan SOM berbeda dari ANN jenis lainnya. Sebab, SOM menerapkan metode pembelajaran kompetitif alih-alih pembelajaran koreksi kesalahan. Jaringan ini juga menerapkan fungsi neighbourhood untuk melestarikan sifat topologi dari ruang input.
+
+# TAHAPAN ALGORITMA SELF ORGANIZING MAP
+
+1. Mengambil data dari beberapa data iris
+ 2. Inisialisasi	bobot	input	dan	aoutput	den
+ 3. Menghitung	Jarak	D(j)	antara	vector	input	dan  output dengan rumus              𝐷_((𝑗) )=∑(𝑖=0)^𝑛〖(𝑤_𝑖𝑗−𝑥_𝑖)²〗(1)
+ 4. Mencari nilai terkecil dari seluruh bobot D(j). Index  dari bobot D(j) yang paling   kecil disebut winning  neuron.
+ 5. Memperbarui setiap bobot Wij dengan  menggunakan rumus :
+wij(𝑏𝑎𝑟𝑢) = wij (𝑙𝑎𝑚𝑎) + 𝑎[xi − wij (𝑙𝑎𝑚𝑎)]  
+ 6. Modifikasi parameter learning rate (α) Untuk  iterasi kedua, memperbarui (α) =0,3 dan bobot  
+  7. Mengulangi Lagkah 6-7 hingga mencapai iterasi.  Maksimal kondisi pemberhentian	wij	hanya  berubah sedikit saja, berhenti iterasi sudah  mencapai konvergen sehingga dapat di hentikan.
+
+# EKSPERIMEN SELF ORGANIZING MAP
+
+
+## PERSIAPAN
+
+#### Paket dan data
+```{r warning=FALSE}
+library(kohonen) 
+library(ggplot2) 
+library(GGally) 
+library(RColorBrewer) 
+
+rm(list = ls())
+
+library(readxl)
+data_kemiskinan_Dian_islamiati_Dahlan_A1202101709_ <- read_excel("~/Semester 3/Metode Regresi/data_kemiskinan_Dian_islamiati_Dahlan_(A1202101709).xlsx")
+View(data_kemiskinan_Dian_islamiati_Dahlan_A1202101709_)
+```
+#### Palet
+
+##### Palet yang bisa kita gunakan nanti.
+
+```{r warning=}
+contrast <- c("#FA4925", "#22693E", "#D4D40F", "#2C4382", "#F0F0F0", "#3D3D3D") #milikku, pasangan yang kontras
+kindofpretty2 <- c("#B39B66", "#3B3828", "#FAE6B9", "#F2F2F2", "#86BA9F", "#135E1F", "#FFF70A", "#FFB10A", "#0498BD", "#FF780A") #my own
+kindofpretty <- c("#B39B66", "#3B3828", "#FAE6B9", "#F2F2F2", "#F58B00", "#F5D800", "#7185A3", "#786187") #milikku
+#atau tentukan palet menggunakan RColorBrewer:
+```
+
+```{r}
+display.brewer.all() 
+```
+
+
