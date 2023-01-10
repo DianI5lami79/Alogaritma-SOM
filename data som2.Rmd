@@ -53,12 +53,13 @@ library(ggplot2)
 library(GGally) 
 library(RColorBrewer) 
 
-#clean slate...:
+#bersihkan batu tulis...:
 rm(list = ls())
 
 iris_complete <-iris[complete.cases(iris),] 
 iris_unique <- unique(iris_complete)
 ```
+
 Palet
 
 Palet yang bisa kita gunakan nanti.
