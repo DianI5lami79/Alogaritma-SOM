@@ -44,9 +44,9 @@ wij(𝑏𝑎𝑟𝑢) = wij (𝑙𝑎𝑚𝑎) + 𝑎[xi − wij (𝑙𝑎𝑚�
 # EKSPERIMEN SELF ORGANIZING MAP
 
 
-PERSIAPAN
+## PERSIAPAN
 
-Paket dan data
+#### Paket dan data
 ```{r warning=FALSE}
 library(kohonen) 
 library(ggplot2) 
@@ -59,9 +59,9 @@ iris_complete <-iris[complete.cases(iris),]
 iris_unique <- unique(iris_complete)
 ```
 
-Palet
+#### Palet
 
-Palet yang bisa kita gunakan nanti.
+##### Palet yang bisa kita gunakan nanti.
 
 ```{r warning=FALSE}
 contrast <- c("#FA4925", "#22693E", "#D4D40F", "#2C4382", "#F0F0F0", "#3D3D3D") #milikku, pasangan yang kontras
@@ -83,12 +83,11 @@ terraincolors <- function(n, alpha = 1) {
   terrain.colors(n, alpha=alpha)[n:1]
 }
 ```
-MENJELASKAN DATA
+## MENJELASKAN DATA
 
 ```{r}
 #well, first of all:
 summary(iris_unique)
-View(iris)
 ```
 
 ```{r}
@@ -96,7 +95,7 @@ View(iris)
 attr(iris_unique,'Sepal') <- c("Sepal.Length", "Sepal.Width")
 attr(iris_unique,'Petal') <- c("Petal.Length", "Petal.Width")
 str(attributes(iris_unique)) 
-View(iris_unique)
+
 ```
 
 ```{r}
@@ -128,7 +127,7 @@ ggduo(
   ylab = "Petal"
 )
 ```
-LATIHAN PETA
+## LATIHAN PETA
 
 ```{r}
 #scale data
@@ -144,7 +143,7 @@ Peta toroidal memiliki bentuk cincin renang dan pada dasarnya bekerja dengan gay
 set.seed(33) #untuk reproduktifitas
 iris.som <- som(iris.sc, grid=iris.grid, rlen=700, alpha=c(0.05,0.01), keep.data = TRUE)
 ```
-Apakah ini model yang bagus?
+### Apakah ini model yang bagus?
 
 ```{r}
 summary(iris.som)
@@ -162,40 +161,33 @@ EF <- AccountedD/meanunitD # Bagilah jarak yang diperhitungkan dengan jarak rata
 #Rasio harus mengatakan sesuatu tentang efisiensi.
 
 meanD
-```
 EF#mendekati 1 = baik.
 ```
-
 ```{r}
 #Mencurigakan bagus? Apakah saya melewatkan sesuatu, atau apakah ini metrik yang baik?
 #Ini benar-benar buta terhadap overfitting (mis. akan, misalnya, selalu meningkat saat kami meningkatkan ukuran kisi).
 ```
-
-PLOT
+## PLOT
 
 ```{r}
 par(mfrow=c(1,1)) #tidak ada plot untuk digabungkan
 par(mar=c(5.1,4.1,4.1,2.1)) #par menyetel atau menyesuaikan parameter plotting. Tidak selalu diperlukan. "mar" = margin.
 plot(iris.som, type="changes") #Yang ini akan menunjukkan jika Anda perlu memanipulasi rlen.
 ```
-
 ```{r}
 #Menunjukkan jarak rata-rata ke vektor buku kode terdekat selama pelatihan. Saya melihat 3 dataran tinggi:
 #250-370, 430-550 dan 620-700. 
 plot(iris.som, type="count") #Node mana yang memiliki banyak pengamatan?
 ```
-
 ```{r}
 plot(iris.som, type="dist.neighbours", palette.name=grey.colors, shape = "straight") # #menunjukkan jumlah jarak ke semua tetangga terdekat.
 ```
-
 ```{r}
 #Jenis visualisasi ini juga dikenal sebagai plot U-matrix. Seharusnya memberi Anda gambaran tentang cara mengelompokkan,
 #karena Unit yang dekat dengan batas kelas diharapkan memiliki jarak rata-rata yang lebih tinggi ke tetangganya.
 #Saya melihat 2-3 kluster/kabupaten (perlu diingat gridnya toroidal).
 plot(iris.som, type="quality", shape = "straight") #mendekati 0 = kualitas bagus.
 ```
-
 ```{r}
 #menunjukkan jarak rata-rata objek yang dipetakan ke suatu unit ke vektor buku kode unit tersebut.
 #alias kesalahan kuantisasi (qe).
@@ -214,31 +206,38 @@ plot(iris.som, type="codes", codeRendering = "lines")
 ```{r}
 plot(iris.som, type="mapping", border = "grey")#Jumlah sel kosong yang lebih rendah, SOM yang lebih baik.
 ```
+
 ```{r}
 #pretty gradient colors
 colour1 <- tricolor(iris.som$grid)
 plot(iris.som, "mapping", bg = rgb(colour1))
 ```
+
 ```{r}
 colour2 <- tricolor(iris.som$grid, phi = c(pi/6, 0, -pi/6))
 plot(iris.som, "mapping", bg = rgb(colour2), shape = "straight")
 ```
+
 ```{r}
 colour3 <- tricolor(iris.som$grid, phi = c(pi/6, 0, -pi/6), offset = .5)
 plot(iris.som, "mapping", bg = rgb(colour3), shape = "straight")
 ```
+
 ```{r}
 colour4 <- tricolor(iris.som$grid, phi = c(pi/8, 6, -pi/6), offset = 0.1)
 plot(iris.som, "codes", bg = rgb(colour4), shape = "straight")
 ```
+
 ```{r}
 #Kita bisa menjadi gila warna di sini..
 plot(iris.som, "mapping", bg = rgb(colour3), shape = "straight",col=brewer.pal(3,"Dark2")) #unclear what the brewer colors represent. Omit.
 ```
+
 ```{r}
 var <- 1#definisikan variabel untuk diplot
 plot(iris.som, type = "property", property = getCodes(iris.som)[,var], main=colnames(getCodes(iris.som))[var], palette.name=terrain.colors)
 ```
+
 ```{r}
 #...dan seterusnya, untuk var 2-4.
 
@@ -249,8 +248,10 @@ var_unscaled <- aggregate(as.numeric(iris_unique[,var]), by=list(iris.som$unit.c
 plot(iris.som, type = "property", property=var_unscaled, main=names(iris_unique)[var], shape = "straight", palette.name = terrain.colors)
 ```
 
-Menu interaktif untuk mempercepat perbandingan antar peta
+#### Menu interaktif untuk mempercepat perbandingan antar peta
+
 Dapat digunakan untuk membandingkan peta yang sama dari perspektif variabel yang berbeda dan untuk mengeksplorasi kemungkinan keterkaitan antar variabel.
+
 
 ```{r}
 #plot variabel dari kumpulan data asli (iris).
@@ -314,17 +315,13 @@ plotHeatMap <- function(som_model, data, variable=0){
 
 par(mfrow=c(2,2)) #Atur matriks agar cocok dengan tidak ada properti untuk dibandingkan.
 ```
+## CLUSTERING DI ATAS SOM
 
-```{r}
-plotHeatMap(iris.som, iris_unique, variable=0) #variable=0 to display the menu.
-```
-
-
-
-CLUSTERING DI ATAS SOM
 Sekarang untuk pengelompokan. Kami mengelompokkan kode, bukan unit. Idenya adalah (seperti yang saya pahami) dengan menggunakan SOM kita dapat membuat materi yang sangat kompleks menjadi relatif sederhana sehingga cocok untuk pendekatan yang lebih mudah seperti pengelompokan hierarkis atau k-means. Pilihannya adalah lebih bergantung pada output SOM, yang awalnya dipandu oleh "punggungan" di matriks-U (jarak tetangga), tetapi selanjutnya juga oleh plot properti.
-pengelompokan k-mean
-Menilai jumlah cluster yang sesuai
+
+### pengelompokan k-mean
+
+##### Menilai jumlah cluster yang sesuai
 
 ```{r}
 par(mfrow=c(1,1)) # kembali ke satu petak
@@ -336,7 +333,9 @@ par(mar=c(5.1,4.1,4.1,2.1)) #par menyetel atau menyesuaikan parameter plotting. 
 plot(1:15, wss, type="b", xlab="Jumlah cluster", #match i
      ylab="Dalam kelompok jumlah kuadrat", main="Di dalam cluster sum of squares (WCSS)")
 ```
-Kelompokkan dan laporkan hasil ke kumpulan data asli
+
+##### Kelompokkan dan laporkan hasil ke kumpulan data asli
+
 ```{r}
 set.seed(33) #for reproducability
 fit_kmeans <- kmeans(clusterdata[,1:4], 3) #3 clusters are used, as indicated by the wss development.
@@ -345,8 +344,8 @@ cl_assignmentk <- fit_kmeans$cluster[iris.som$unit.classif] #we have 100 (since 
 iris_unique$clustersKm <- cl_assignmentk #back to original data.
 ```
 
-Pengelompokan aglomeratif (bottom up) hirarkis (HAC)
-Cluster dan nilai no cluster yang sesuai, potong cluster menjadi k grup dan laporkan hasilnya ke dataset asli
+### Pengelompokan aglomeratif (bottom up) hirarkis (HAC)
+##### Cluster dan nilai no cluster yang sesuai, potong cluster menjadi k grup dan laporkan hasilnya ke dataset asli
 
 ```{r}
 #2a. Create distance matrix
