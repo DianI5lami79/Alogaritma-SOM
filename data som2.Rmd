@@ -110,7 +110,7 @@ ggpairs(iris_unique, title = "the whole dataset")
 ```
 
 ```{r}
-ggpairs(iris_unique, SepalVar, title = "Within Sepal")
+ggpairs(iris_unique, SepalVar, title = "Di dalam Sepal")
 ```
 
 ```{r}
