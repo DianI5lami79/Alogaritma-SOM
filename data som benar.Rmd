@@ -52,14 +52,15 @@ library(RColorBrewer)
 
 rm(list = ls())
 library(readxl)
-data_kemiskinan <- read_excel("~/Semester 3/Data Mining/data_kemiskinan.xlsx")
-View(data_kemiskinan)
+Larva_2 <- read_excel("Larva 2.xlsx")
+View(Larva_2)
 ```
 #### Palet
 
 ##### Palet yang bisa kita gunakan nanti.
 
 ```{r warning=}
+
 contrast <- c("#FA4925", "#22693E", "#D4D40F", "#2C4382", "#F0F0F0", "#3D3D3D") #milikku, pasangan yang kontras
 kindofpretty2 <- c("#B39B66", "#3B3828", "#FAE6B9", "#F2F2F2", "#86BA9F", "#135E1F", "#FFF70A", "#FFB10A", "#0498BD", "#FF780A") #my own
 kindofpretty <- c("#B39B66", "#3B3828", "#FAE6B9", "#F2F2F2", "#F58B00", "#F5D800", "#7185A3", "#786187") #milikku
@@ -81,31 +82,31 @@ terraincolors <- function(n, alpha = 1) {
 
 ```{r}
 #baik, pertama-tama:
-summary(data_kemiskinan)
+summary(Larva_2)
 ```
 ```{r}
 #Tetapkan atribut untuk dapat mengklasifikasikan variabel (bukan pengamatan) yang kemudian dapat diselidiki menggunakan GGally.
-attr(data_kemiskinan ,'Kemiskinan') <- c("Kemiskinan", "KatMiskin")
-attr(data_kemiskinan ,'IPM') <- c("IPM", "PLN")
-str(attributes(data_kemiskinan)) 
+attr(Larva_2 ,'Load_time') <- c(" Load_time", "Load.displacement.max")
+attr(Larva_2 ,'Latch_time') <- c(" Latch_time", " Launch_time ")
+str(attributes(Larva_2)) 
 ```
 ```{r}
-(SepalVar <- attr(data_kemiskinan, "Kemiskinan")) #Tentukan kelompok variabel berdasarkan atribut
+(SepalVar <- attr(Larva_2, "Load_time")) #Tentukan kelompok variabel berdasarkan atribut
 ```
 ```{r}
-(PetalVar <- attr(data_kemiskinan, "IPM"))
+(PetalVar <- attr(Larva_2, "Latch_time"))
 ```
 ```{r}
 # Selanjutnya, lihat korelasi dalam menggunakan ggpairs.
 
-ggpairs(data_kemiskinan  , title = "seluruh data")
+ggpairs(Larva_2 , title = "seluruh data")
 
 ```
 ```{r}
-ggpairs(data_kemiskinan, SepalVar, title = "di dalam Kemiskinan ")
+ggpairs(Larva_2, SepalVar, title = "Di dalam Load_time")
 ```
 ```{r}
-ggpairs(data_kemiskinan, PetalVar, title = "di dalam IPM")
+ggpairs(Larva_2, PetalVar, title = "di dalam Latch_time")
 ```
 ```{r warning=FALSE}
 # Kemudian, lihat korelasi antar menggunakan ggpairs.
