@@ -57,6 +57,7 @@ rm(list = ls())
 iris_complete <-iris[complete.cases(iris),] 
 iris_unique <- unique(iris_complete)
 View(iris_unique)
+View(iris)
 ```
 
 #### Palet
@@ -115,7 +116,7 @@ ggpairs(iris_unique, SepalVar, title = "Di dalam Sepal")
 ```
 
 ```{r}
-ggpairs(iris_unique, PetalVar, title = "Within Petal")
+ggpairs(iris_unique, PetalVar, title = "di dalam Petal")
 ```
 ```{r}
 # Kemudian, lihat korelasi antar menggunakan ggpairs.

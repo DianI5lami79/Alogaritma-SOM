@@ -52,8 +52,8 @@ library(RColorBrewer)
 
 rm(list = ls())
 library(readxl)
-data_kemiskinan <- read_excel("~/Semester 3/Metode Regresi/data_kemiskinan.xlsx")
-View(data_kemiskinan)
+Golf <- read_excel("~/Semester 3/Data Mining/dataset/Golf.xls")
+View(Golf)
 ```
 #### Palet
 
@@ -81,27 +81,30 @@ terraincolors <- function(n, alpha = 1) {
 
 ```{r}
 #baik, pertama-tama:
-summary(kemiskinan_unique)
+summary(Golf)
 ```
 ```{r}
 #Tetapkan atribut untuk dapat mengklasifikasikan variabel (bukan pengamatan) yang kemudian dapat diselidiki menggunakan GGally.
-attr(kemiskinan_unique,'Kemiskinan') <- c("Kemiskinan", "Katmiskin")
-attr(kemiskinan_unique,'IPM') <- c("IPM", "PLN")
-str(attributes(kemiskinan_unique)) 
+attr(Golf ,'outlook') <- c("outlook", "Temperatur")
+attr(Golf ,'Humidity') <- c("Humidity", "Windy")
+str(attributes(Golf)) 
 ```
 ```{r}
-(SepalVar <- attr(kemiskinan_unique, "Kemiskinan")) #Tentukan kelompok variabel berdasarkan atribut
+(SepalVar <- attr(Golf, "outlook")) #Tentukan kelompok variabel berdasarkan atribut
 ```
 ```{r}
-(PetalVar <- attr(kemiskinan_unique, "IPM"))
+(PetalVar <- attr(Golf, "Humidity"))
 ```
 ```{r}
 # Selanjutnya, lihat korelasi dalam menggunakan ggpairs.
 
-ggparcoord(kemiskinan_unique  , title = "seluruh data")
+ggpairs(Golf  , title = "seluruh data")
 
 ```
-```{r}")
-
+```{r}
+ggpairs(Golf, SepalVar, title = "di dalam outlook ")
+```
+```{r}
+ggpairs(Golf, PetalVar, title = "di dalam Temperatur")
 ```
 
