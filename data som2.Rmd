@@ -139,6 +139,7 @@ iris.grid = somgrid(xdim = 10, ydim=10, topo="hexagonal", toroidal = TRUE) #grid
 #Dalam peta toroidal, batas di tepi hanya akan ditampilkan di sisi atas dan kanan untuk menghindari batas ganda.
 ```
 Peta toroidal memiliki bentuk cincin renang dan pada dasarnya bekerja dengan gaya seperti PacMan - jika Anda melewati batas, Anda akan berakhir di ujung peta yang berlawanan.
+
 ```{r}
 # membangun model
 set.seed(33) #untuk reproduktifitas

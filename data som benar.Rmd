@@ -52,8 +52,8 @@ library(RColorBrewer)
 
 rm(list = ls())
 library(readxl)
-Golf <- read_excel("~/Semester 3/Data Mining/dataset/Golf.xls")
-View(Golf)
+data_kemiskinan <- read_excel("~/Semester 3/Data Mining/data_kemiskinan.xlsx")
+View(data_kemiskinan)
 ```
 #### Palet
 
@@ -81,30 +81,60 @@ terraincolors <- function(n, alpha = 1) {
 
 ```{r}
 #baik, pertama-tama:
-summary(Golf)
+summary(data_kemiskinan)
 ```
 ```{r}
 #Tetapkan atribut untuk dapat mengklasifikasikan variabel (bukan pengamatan) yang kemudian dapat diselidiki menggunakan GGally.
-attr(Golf ,'outlook') <- c("outlook", "Temperatur")
-attr(Golf ,'Humidity') <- c("Humidity", "Windy")
-str(attributes(Golf)) 
+attr(data_kemiskinan ,'Kemiskinan') <- c("Kemiskinan", "KatMiskin")
+attr(data_kemiskinan ,'IPM') <- c("IPM", "PLN")
+str(attributes(data_kemiskinan)) 
 ```
 ```{r}
-(SepalVar <- attr(Golf, "outlook")) #Tentukan kelompok variabel berdasarkan atribut
+(SepalVar <- attr(data_kemiskinan, "Kemiskinan")) #Tentukan kelompok variabel berdasarkan atribut
 ```
 ```{r}
-(PetalVar <- attr(Golf, "Humidity"))
+(PetalVar <- attr(data_kemiskinan, "IPM"))
 ```
 ```{r}
 # Selanjutnya, lihat korelasi dalam menggunakan ggpairs.
 
-ggpairs(Golf  , title = "seluruh data")
+ggpairs(data_kemiskinan  , title = "seluruh data")
 
 ```
 ```{r}
-ggpairs(Golf, SepalVar, title = "di dalam outlook ")
+ggpairs(data_kemiskinan, SepalVar, title = "di dalam Kemiskinan ")
 ```
 ```{r}
-ggpairs(Golf, PetalVar, title = "di dalam Temperatur")
+ggpairs(data_kemiskinan, PetalVar, title = "di dalam IPM")
 ```
+```{r warning=FALSE}
+# Kemudian, lihat korelasi antar menggunakan ggpairs.
+ggduo(
+  data_kemiskinan, SepalVar, PetalVar,
+  types = list(continuous = "smooth_loess"),
+  title = "Korelasi antara variabel Kemiskinan dan IPM",
+  xlab = "Kemiskinan",
+  ylab = "IPM"
+)
+```
+## LATIHAN PETA
+
+```{r}
+#scale data
+data_kemiskinan.sc = scale_alpha (data_kemiskinan[, 1:4]) #Levels/Factors tidak dapat diskalakan... Tetapi digunakan dalam SOM prediktif menggunakan xyf. Nanti.
+#bangun jaringan
+data_kemiskinan.grid = somgrid(xdim = 2, ydim=2, topo="hexagonal", toroidal = TRUE) #gridsize kira-kira 5-10 sample/node. Heksagonal lebih disukai (lebih banyak tetangga).
+#Oleh karena itu, 10*10 adalah petak yang terlalu besar saat n=15. Tapi kami akan membahasnya di sini untuk tujuan ilustrasi.
+#Dalam peta toroidal, batas di tepi hanya akan ditampilkan di sisi atas dan kanan untuk menghindari batas ganda.
+```
+
+Peta toroidal memiliki bentuk cincin renang dan pada dasarnya bekerja dengan gaya seperti PacMan - jika Anda melewati batas, Anda akan berakhir di ujung peta yang berlawanan.
+
+
+
+
+
+
+
+
 
