@@ -85,7 +85,7 @@ terraincolors <- function(n, alpha = 1) {
 ## MENJELASKAN DATA
 
 ```{r}
-#well, first of all:
+#pertama-tama:
 summary(iris_unique)
 ```
 

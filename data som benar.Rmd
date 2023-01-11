@@ -51,7 +51,12 @@ library(GGally)
 library(RColorBrewer) 
 
 rm(list = ls())
-
+library(readxl)
+kemiskinan <- read_excel("~/Semester 3/Metode Regresi/data_kemiskinan.xlsx")
+library(readxl)
+kemiskinan_unique <- read_excel("~/Semester 3/Metode Regresi/data_kemiskinan.xlsx")
+View(kemiskinan_unique)
+View(kemiskinan)
 
 ```
 #### Palet
@@ -76,27 +81,28 @@ terraincolors <- function(n, alpha = 1) {
   terrain.colors(n, alpha=alpha)[n:1]
 }
 ```
+## Menjelaskan Data
 
 ```{r}
 #baik, pertama-tama:
-summary(data_kemiskinan)
+summary(kemiskinan_unique)
 ```
 ```{r}
 #Tetapkan atribut untuk dapat mengklasifikasikan variabel (bukan pengamatan) yang kemudian dapat diselidiki menggunakan GGally.
-attr(data_kemiskinan,'Kemiskinan') <- c("Kemiskinan", "Katmiskin")
-attr(data_kemiskinan,'IPM') <- c("IPM", "PLN")
-str(data_kemiskinan)
+attr(kemiskinan_unique,'Kemiskinan') <- c("Kemiskinan", "Katmiskin")
+attr(kemiskinan_unique,'IPM') <- c("IPM", "PLN")
+str(attributes(kemiskinan_unique)) 
 ```
 ```{r}
-(SepalVar <- attr(data_kemiskinan, "Kemiskinan")) #Tentukan kelompok variabel berdasarkan atribut
+(SepalVar <- attr(kemiskinan_unique, "Kemiskinan")) #Tentukan kelompok variabel berdasarkan atribut
 ```
 ```{r}
-(PetalVar <- attr(data_kemiskinan, "IPM"))
+(PetalVar <- attr(kemiskinan_unique, "IPM"))
 ```
-```{r eval=FALSE}
+```{r}
 # Selanjutnya, lihat korelasi dalam menggunakan ggpairs.
 
-ggparcoord(data_kemiskinan, title = "seluruh kumpulan data")
+ggpairs(kemiskinan_unique, title = "seluruh data")
 
 ```
 ```{r}
