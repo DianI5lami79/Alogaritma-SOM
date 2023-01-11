@@ -52,12 +52,8 @@ library(RColorBrewer)
 
 rm(list = ls())
 library(readxl)
-kemiskinan <- read_excel("~/Semester 3/Metode Regresi/data_kemiskinan.xlsx")
-library(readxl)
-kemiskinan_unique <- read_excel("~/Semester 3/Metode Regresi/data_kemiskinan.xlsx")
-View(kemiskinan_unique)
-View(kemiskinan)
-
+data_kemiskinan <- read_excel("~/Semester 3/Metode Regresi/data_kemiskinan.xlsx")
+View(data_kemiskinan)
 ```
 #### Palet
 
@@ -102,11 +98,10 @@ str(attributes(kemiskinan_unique))
 ```{r}
 # Selanjutnya, lihat korelasi dalam menggunakan ggpairs.
 
-ggpairs(kemiskinan_unique, title = "seluruh data")
+ggparcoord(kemiskinan_unique  , title = "seluruh data")
 
 ```
-```{r}
-ggparcoord(data_kemiskinan, SepalVar, title = "Within Sepal")
+```{r}")
 
 ```
 
