@@ -115,10 +115,10 @@ ggduo(
 
 ```{r}
 #scale data
-Data_penguin.sc = scale_alpha (Data_penguin[, 1:4]) #Levels/Factors tidak dapat diskalakan... Tetapi digunakan dalam SOM prediktif menggunakan xyf. Nanti. 
+Data_penguin.sc = scale_alpha(Data_penguin[, 1:4])#Levels/Factors tidak dapat diskalakan... Tetapi digunakan dalam SOM prediktif menggunakan xyf. Nanti. 
 #bangun jaringan
 Data_penguin.grid = somgrid(xdim = 10, ydim=10, topo="hexagonal", toroidal = TRUE) #gridsize kira-kira 5-10 sample/node. Heksagonal lebih disukai (lebih banyak tetangga).
-#Oleh karena itu, 10*10 adalah petak yang terlalu besar saat n=150. Tapi kami akan membahasnya di sini untuk tujuan ilustrasi.
+#Oleh karena itu, 10*10 adalah petak yang terlalu besar saat n=342. Tapi kami akan membahasnya di sini untuk tujuan ilustrasi.
 #Dalam peta toroidal, batas di tepi hanya akan ditampilkan di sisi atas dan kanan untuk menghindari batas ganda.
 ```
 
@@ -127,11 +127,13 @@ Peta toroidal memiliki bentuk cincin renang dan pada dasarnya bekerja dengan gay
 ```{r}
 # membangun model
 set.seed(33) #untuk reproduktifitas
-Data_penguin.som <- som(Data_penguin.sc, grid=Data_penguin.grid, rlen=700, alpha=c(0.05,0.01), keep.data = TRUE)
+Data_penguin_som<- som(Data_penguin.sc, grid=Data_penguin.grid, rlen=700, alpha=c(0.05,0.01), keep.data = TRUE)
+```
+```{r}
+summary(Data_penguin.som)
 ```
 
 # REFRENSI
-
 1.https://algorit.ma/blog/self-organizing-maps-som-2022/
 2.https://www.researchgate.net/publication/331741192_Self_Organizing_MapsSOM_untuk_Pengelompokkan_Jurusan_di_SMK
 3.https://www.kaggle.com/code/parulpandey/penguin-dataset-the-new-iris/notebook
