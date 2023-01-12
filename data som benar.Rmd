@@ -42,68 +42,134 @@ Gagasan mengenai SOM pertama kali dicetuskan oleh Teuvo Kohonen, seorang penelit
 # EKSPERIMEN SELF ORGANIZING MAP
 
 #### study Kasus
+
+1. Aktifkan package Class , MASS , dan Kohonen dengan syntax seperti berikut.
+
 ```{r warning=FALSE}
 library(class)
 library(MASS)
 library(kohonen)
-library(ggplot2)
 ```
+
+2. Memanggil data iris dalam R dengan syntax seperti berikut.
 
 ```{r}
 data("iris")
 View(iris)
 ```
+
+Berdasarkan data iris diatas dapat diketahui bahwa terdapat 5 variabel yaitu Sepal.Length, Sepal.Width, Petal.Length, Petal.Width dan species(sebagai label)
+
+3. Melakukan standarisasi pada Variabel species(label)
+
 ```{r}
 scale(iris[,-5])
 head(scale(iris[,-5]))
 ```
+
+4. Melihat dimensi dari data iris dengan syntax seperti berikut.
+
 ```{r}
 dim(iris)
 ```
+
+Berdasarkan hasil output diatas dapat diketahui bahwa dimensi data yang ada yaitu 150 baris dan 5 kolom.
+
+5. Melihat struktur dari data iris dengan syntax seperti berikut.
 ```{r}
 str(iris)
 ```
+6. Kemudian membuat kelompok atau clustering dari data iris dengan syntax berikut:
+
 ```{r}
 grid <- somgrid(xdim=5 , ydim=5 , topo = "hexagonal")
 ```
+
+7. Selanjutnya melakukan perintah SOM dari data iris dengan syntax seperti berikut.
 
 ```{r warning=FALSE}
 som.iris <- som(as.matrix(iris[,-5]), grid = somgrid(xdim = 4, ydim = 4, topo="hexagonal"))
 ```
 
+8. Melihat struktur data setelah adanya cara kerja SOM pada data iris dengan syntax seperti berikut.
+
 ```{r}
 str(som.iris)
 ```
+
+9. Melihat hasil plot dari data dengan syntax seperti berikut.
+
 ```{r}
 plot(som.iris, type="mapping")
 ```
+
+Berdasarkan hasil output diatas dapat diketahui bahwa dimensi dari letak gambar yaitu 4x4 maka terdapat sebanyak 16 lingkaran yang menyatakan data sudah terkumpul pada masing-masing lingkaran tersebut.
+
+10. Untuk mengetahui objek yang masuk didalam lingkaran maka menggunakan syntax seperti berikut.
+
 ```{r}
 som.iris$grid$pts
 ```
+
+Berdasarkan hasil output diatas dapat diketahui bahwa pada lingkaran pertama sumbu x bernilai 1.5 dan sumbu y bernilai 0.8660254 , pada lingkaran kedua sumbu x bernilai 2.5 dan sumbu y bernilai 0.8660254 dan seterusnya.
+
+11. Untuk melihat letak nomer objek berapa yang masuk dalam lingkaran maka digunakan syntax seperti berikut.
+
 ```{r}
 som.iris$unit.classif
 ```
+
+Berdasarkan output diatas dapat diketahui bahwa objek nomer 1 masuk dalam lingkaran 9 , objek nomer 2 masuk dalam lingkaran 14 dan objek nomer 145 masuk dalam lingkaran 4.
+
+12. Kemudian melihat plot keseluruhan som.wines dengan syntax seperti berikut.
+
 ```{r}
 plot(som.iris)
+text(som.iris$grid$pts, labels = som.iris$unit.classif,cex=1.5)
 ```
+Berdasarkan hasil plot diatas dapat diketahui bahwa dari semua 4 variabel yang ada tidak ada satupun variabel yang direduksi. Pada warna hijau mewakili variabel Sepal.Lengh , pada warna kuning mewakili variabel Sepal.Width , dan seterusnya.
+
+Berdasarkan plot diatas dapat diketahui bahwa terlihat nilai-nilai dari nomor objeknya. Dalam satu lingkaran terdapat beberapa objek sehingga beberapa angka bertumpukkan menjadi satu.
+
+
+
+13. Selanjutnya melihat hasil pengelompokkan dari beberapa objek didalam masing-masing lingkaran dengan syntax seperti berikut.
+
 ```{r}
 som.iris$codes[[1]]
 ```
+
+Berdasarkan hasil output diatas terdapat sebanyak 16 nilai dari 4 variabel. Nilai V1 dari Sepal.Length  adalah 5.404944  ,dari Sepal.Width sebesar 2.490191 , dan seterusnya sampai dengan V16.
+
+14. Melakukan pengelompokkan berdasarkan nilai codes menggunakan cluster hierarki dengan syntax seperti berikut.
+
 ```{r}
 dist(som.iris$codes[[1]])
 hclust(dist(som.iris$codes[[1]]))
 ```
+
+Berdasarkan hasil diatas dapat diketahui bahwa pengelompokkan yang dilakukan dengan cluster hierarki menggunakan metode complete , dan menggunakan distance yaitu euclidean dengan objek sebanyak 16.
+
+15. Kemudian membuat plot hasil pengelompokkan dengan syntax seperti berikut.
+
 ```{r}
 peta <- cutree(hclust(dist(som.iris$codes[[1]])),5)
 plot(peta)
 plot(som.iris,type="codes",bgcol=rainbow(5)[peta])
+add.cluster.boundaries(som.iris,peta)
 ```
+
+Berdasarkan hasil plot diatas dapat diketahui bahwa hasil pengelompokkan dari 20 objek lingkaran menghasilkan 5 kelompok. Pada kelompok lingkaran berwarna hijau terdapat 3 objek, kelompok lingkaran berwarna merah terdapat 5 objek , kelompok lingkaran berwarna kuning terdapat 4 objek , kelompok lingkaran berwarna ungu terdapat 1 objek dan kelompok lingkaran berwarna biru terdapat 3 objek. dan Dengan adanya garis pembatas seperti hasil output diatas maka dapat dilihat dengan jelas bahwa pengelompokkan yang terdapat pada data iris dengan SOM yaitu 5 kelompok.
+
+
+
+~~~~~ THANK YOU ~~~~~
+
 
 
 
 # REFRENSI
-
-
+1. https://medium.com/@16611130/penerapan-self-organizing-map-som-pada-r-menggunakan-data-wines-7c83130fc1a0
 
 
 
