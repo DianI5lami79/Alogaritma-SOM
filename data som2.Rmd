@@ -41,331 +41,99 @@ wij(𝑏𝑎𝑟𝑢) = wij (𝑙𝑎𝑚𝑎) + 𝑎[xi − wij (𝑙𝑎𝑚�
 
 
 # EKSPERIMEN SELF ORGANIZING MAP
-
-
-## PERSIAPAN
-
-#### Paket dan data
+1.Aktifkan package Class , MASS , dan Kohonen dengan syntax seperti berikut.
 ```{r warning=FALSE}
-library(kohonen) 
-library(ggplot2) 
-library(GGally) 
-library(RColorBrewer) 
 
-rm(list = ls())
+library(class)
+library(MASS)
+library(kohonen)
+```
+2. Memanggil data wines dalam R dengan syntax seperti berikut.
+```{r}
+data("wines")
+View(wines)
+```
+Berdasarkan data wines diatas dapat diketahui bahwa terdapat 13 variabel yaitu alcohol , malic acid , ash , ash alkalinity , magnesium , tot. phenols , flavonoids , non-fav.phenols , proanth , col.int , col.hue , OD ratio , proline.
 
-iris_complete <-iris[complete.cases(iris),] 
-iris_unique <- unique(iris_complete)
-View(iris_unique)
-View(iris)
+3.Melakukan standarisasi data karena pada data wines ukuran data atau satuan dalam setiap variabelnya berbeda dengan syntax seperti berikut.
+
+```{r}
+scale(wines)
+head(scale(wines))
+```
+4. Melihat dimensi dari data wines dengan syntax seperti berikut.
+```{r}
+dim(wines)
+```
+Berdasarkan hasil output diatas dapat diketahui bahwa dimensi data yang ada yaitu 177 baris dan 13kolom.
+
+5. Melihat struktur dari data wine dengan syntax seperti berikut.
+```{r}
+str(wines)
+```
+6. Kemudian membuat kelompok atau clustering dari data wines dengan syntax berikut:
+```{r}
+grid <- somgrid(xdim=5 , ydim=5 , topo = "hexagonal")
 ```
 
-#### Palet
-
-##### Palet yang bisa kita gunakan nanti.
+7. Selanjutnya melakukan perintah SOM dari data wines dengan syntax seperti berikut.
 
 ```{r warning=FALSE}
-contrast <- c("#FA4925", "#22693E", "#D4D40F", "#2C4382", "#F0F0F0", "#3D3D3D") #milikku, pasangan yang kontras
-kindofpretty <- c("#B39B66", "#3B3828", "#FAE6B9", "#F2F2F2", "#86BA9F", "#135E1F", "#FFF70A", "#FFB10A", "#0498BD", "#FF780A") #my own
-kindofpretty2 <- c("#B39B66", "#3B3828", "#FAE6B9", "#F2F2F2", "#F58B00", "#F5D800", "#7185A3", "#786187") #milikku
-#atau tentukan palet menggunakan RColorBrewer:
+som.wines<-som(scale(wines), grid=somgrid(xdim=5, ydim=5, topo="hexagonal"))
+```
+8.Melihat struktur data setelah adanya cara kerja SOM pada data wines dengan syntax seperti berikut.
+
+```{r}
+str(som.wines)
+```
+9. Melihat hasil plot dari data dengan syntax seperti berikut.
+
+```{r}
+plot(som.wines, type="mapping")
 ```
 
 
+Berdasarkan hasil output diatas dapat diketahui bahwa dimensi dari letak gambar yaitu 5x5 maka terdapat sebanyak 25 lingkaran yang menyatakan data sudah terkumpul pada masing-masing lingkaran tersebut.
+
+10. Untuk mengetahui objek yang masuk didalam lingkaran maka menggunakan syntax seperti berikut.
+
 ```{r}
-display.brewer.all() 
+som.wines$grid$pts
+```
+Berdasarkan hasil output diatas dapat diketahui bahwa pada lingkaran pertama sumbu x bernilai 1.5 dan sumbu y bernilai 0.8660254 , pada lingkaran kedua sumbu x bernilai 2.5 dan sumbu y bernilai 0.8660254 dan seterusnya.
+
+11. Untuk melihat letak nomer objek berapa yang masuk dalam lingkaran maka digunakan syntax seperti berikut.
+```{r}
+som.wines$unit.classif
+```
+Berdasarkan output diatas dapat diketahui bahwa objek nomer 1 masuk dalam lingkaran 20 , objek nomer 2 masuk dalam lingkaran 10 dan objek nomer 177 masuk dalam lingkaran 1.
+
+12. Kemudian melihat plot keseluruhan som.wines dengan syntax seperti berikut
+
+```{r}
+plot(som.wines)
 ```
 
+13. Selanjutnya melihat hasil pengelompokkan dari beberapa objek didalam masing-masing lingkaran dengan syntax seperti berikut.
+
 ```{r}
-#dan kemudian, misalnya:
-cols <- brewer.pal(10, "Paired")
-#Demikian pula, tetapi fungsi warna yang akan dipanggil dari dalam fungsi lain. Mudah diubah menjadi pelangi, dll.
-terraincolors <- function(n, alpha = 1) {
-  terrain.colors(n, alpha=alpha)[n:1]
-}
+som.wines$codes[[1]]
 ```
-## MENJELASKAN DATA
+Berdasarkan hasil output diatas terdapat sebanyak 25 nilai dari 13 variabel. Nilai V1 dari alcohol adalah 0.592534990 ,dari malic acid sebesar 1.45159026 , dan seterusnya sampai dengan V25.
 
+14. Melakukan pengelompokkan berdasarkan nilai codes menggunakan cluster hierarki dengan syntax seperti berikut.
 ```{r}
-#pertama-tama:
-summary(iris_unique)
+dist(som.wines$codes[[1]])
+hclust(dist(som.wines$codes[[1]]))
 ```
+Berdasarkan hasil diatas dapat diketahui bahwa pengelompokkan yang dilakukan dengan cluster hierarki menggunakan metode complete , dan menggunakan distance yaitu euclidean dengan objek sebanyak 25.
 
+
+15.Kemudian membuat plot hasil pengelompokkan dengan syntax seperti berikut.
 ```{r}
-#Tetapkan atribut untuk dapat mengklasifikasikan variabel (bukan pengamatan) yang kemudian dapat diselidiki menggunakan GGally.
-attr(iris_unique,'Sepal') <- c("Sepal.Length", "Sepal.Width")
-attr(iris_unique,'Petal') <- c("Petal.Length", "Petal.Width")
-str(attributes(iris_unique)) 
-
-```
-
-```{r}
-(SepalVar <- attr(iris_unique, "Sepal")) #Tentukan kelompok variabel berdasarkan atribut
-```
-```{r}
-(PetalVar <- attr(iris_unique, "Petal"))
-```
-
-```{r}
-# Selanjutnya, lihat korelasi dalam menggunakan ggpairs.
-ggpairs(iris_unique, title = "the whole dataset")
-```
-
-```{r}
-ggpairs(iris_unique, SepalVar, title = "Di dalam Sepal")
-```
-
-```{r}
-ggpairs(iris_unique, PetalVar, title = "di dalam Petal")
-```
-```{r}
-# Kemudian, lihat korelasi antar menggunakan ggpairs.
-ggduo(
-  iris_unique, SepalVar, PetalVar,
-  types = list(continuous = "smooth_lm"),
-  title = "Korelasi antara variabel Sepal dan Petal",
-  xlab = "Sepal",
-  ylab = "Petal"
-)
-```
-
-
-## LATIHAN PETA
-
-```{r}
-#scale data
-iris.sc = scale(iris_unique[, 1:4]) #Levels/Factors tidak dapat diskalakan... Tetapi digunakan dalam SOM prediktif menggunakan xyf. Nanti.
-#bangun jaringan
-iris.grid = somgrid(xdim = 10, ydim=10, topo="hexagonal", toroidal = TRUE) #gridsize kira-kira 5-10 sample/node. Heksagonal lebih disukai (lebih banyak tetangga).
-#Oleh karena itu, 10*10 adalah petak yang terlalu besar saat n=150. Tapi kami akan membahasnya di sini untuk tujuan ilustrasi.
-#Dalam peta toroidal, batas di tepi hanya akan ditampilkan di sisi atas dan kanan untuk menghindari batas ganda.
-```
-Peta toroidal memiliki bentuk cincin renang dan pada dasarnya bekerja dengan gaya seperti PacMan - jika Anda melewati batas, Anda akan berakhir di ujung peta yang berlawanan.
-
-```{r}
-# membangun model
-set.seed(33) #untuk reproduktifitas
-iris.som <- som(iris.sc, grid=iris.grid, rlen=700, alpha=c(0.05,0.01), keep.data = TRUE)
-```
-### Apakah ini model yang bagus?
-
-```{r}
-summary(iris.som)
-```
-```{r}
-#menembak pada efisiensi
-#menghubungkan jarak rata-rata antara unit dan simpul terdekat dengan jarak rata-rata antar unit?
-meanD <- mean(iris.som$distances) #mean jarak antara kode dan masing-masing unit terdekat di peta.
-meanunitD <- mean(unit.distances(iris.grid)) #Jarak antar unit memberi kita petunjuk tentang
-#jarak sebelum pemetaan.
-AccountedD <- meanunitD - meanD #MeanD adalah jarak yang "tersisa" saat kita menggunakan peta.
-# Perbedaan antara jarak yang masuk dan yang tersisa saat kita selesai adalah jarak yang telah kita perhitungkan.
-#Jika meandistance adalah 0 (tidak akan pernah terjadi), kami memiliki kecocokan sempurna antara unit dan kode.
-EF <- AccountedD/meanunitD # Bagilah jarak yang diperhitungkan dengan jarak rata-rata sebelum pemetaan.
-#Rasio harus mengatakan sesuatu tentang efisiensi.
-
-meanD
-EF#mendekati 1 = baik.
-```
-```{r}
-#Mencurigakan bagus? Apakah saya melewatkan sesuatu, atau apakah ini metrik yang baik?
-#Ini benar-benar buta terhadap overfitting (mis. akan, misalnya, selalu meningkat saat kami meningkatkan ukuran kisi).
-```
-## PLOT
-
-```{r}
-par(mfrow=c(1,1)) #tidak ada plot untuk digabungkan
-par(mar=c(5.1,4.1,4.1,2.1)) #par menyetel atau menyesuaikan parameter plotting. Tidak selalu diperlukan. "mar" = margin.
-plot(iris.som, type="changes") #Yang ini akan menunjukkan jika Anda perlu memanipulasi rlen.
-```
-```{r}
-#Menunjukkan jarak rata-rata ke vektor buku kode terdekat selama pelatihan. Saya melihat 3 dataran tinggi:
-#250-370, 430-550 dan 620-700. 
-plot(iris.som, type="count") #Node mana yang memiliki banyak pengamatan?
-```
-```{r}
-plot(iris.som, type="dist.neighbours", palette.name=grey.colors, shape = "straight") # #menunjukkan jumlah jarak ke semua tetangga terdekat.
-```
-```{r}
-#Jenis visualisasi ini juga dikenal sebagai plot U-matrix. Seharusnya memberi Anda gambaran tentang cara mengelompokkan,
-#karena Unit yang dekat dengan batas kelas diharapkan memiliki jarak rata-rata yang lebih tinggi ke tetangganya.
-#Saya melihat 2-3 kluster/kabupaten (perlu diingat gridnya toroidal).
-plot(iris.som, type="quality", shape = "straight") #mendekati 0 = kualitas bagus.
-```
-```{r}
-#menunjukkan jarak rata-rata objek yang dipetakan ke suatu unit ke vektor buku kode unit tersebut.
-#alias kesalahan kuantisasi (qe).
-#Semakin kecil jaraknya, semakin baik objek direpresentasikan oleh vektor buku kode.
-plot(iris.som, type="codes", codeRendering = "stars") #menunjukkan vektor codebook.
-```
-
-```{r}
-plot(iris.som, type="codes", codeRendering = "segments") #default
-```
-
-```{r}
-plot(iris.som, type="codes", codeRendering = "lines")
-```
-
-```{r}
-plot(iris.som, type="mapping", border = "grey")#Jumlah sel kosong yang lebih rendah, SOM yang lebih baik.
-```
-
-```{r}
-#pretty gradient colors
-colour1 <- tricolor(iris.som$grid)
-plot(iris.som, "mapping", bg = rgb(colour1))
-```
-
-```{r}
-colour2 <- tricolor(iris.som$grid, phi = c(pi/6, 0, -pi/6))
-plot(iris.som, "mapping", bg = rgb(colour2), shape = "straight")
-```
-
-```{r}
-colour3 <- tricolor(iris.som$grid, phi = c(pi/6, 0, -pi/6), offset = .5)
-plot(iris.som, "mapping", bg = rgb(colour3), shape = "straight")
-```
-
-```{r}
-colour4 <- tricolor(iris.som$grid, phi = c(pi/8, 6, -pi/6), offset = 0.1)
-plot(iris.som, "codes", bg = rgb(colour4), shape = "straight")
-```
-
-```{r}
-#Kita bisa menjadi gila warna di sini..
-plot(iris.som, "mapping", bg = rgb(colour3), shape = "straight",col=brewer.pal(3,"Dark2")) #unclear what the brewer colors represent. Omit.
-```
-
-```{r}
-var <- 1#definisikan variabel untuk diplot
-plot(iris.som, type = "property", property = getCodes(iris.som)[,var], main=colnames(getCodes(iris.som))[var], palette.name=terrain.colors)
-```
-
-```{r}
-#...dan seterusnya, untuk var 2-4.
-
-#Tapi lebih informatif:
-#Plot yang tidak diskalakan (yaitu, mungkin lebih mudah dihubungkan)
-var <- 1 #define the variable to plot
-var_unscaled <- aggregate(as.numeric(iris_unique[,var]), by=list(iris.som$unit.classif), FUN=mean, simplify=TRUE)[,2]
-plot(iris.som, type = "property", property=var_unscaled, main=names(iris_unique)[var], shape = "straight", palette.name = terrain.colors)
-```
-
-#### Menu interaktif untuk mempercepat perbandingan antar peta
-
-Dapat digunakan untuk membandingkan peta yang sama dari perspektif variabel yang berbeda dan untuk mengeksplorasi kemungkinan keterkaitan antar variabel.
-
-
-```{r}
-#plot variabel dari kumpulan data asli (iris).
-#Fungsi di bawah menghasilkan menu untuk beberapa peta panas, jika sebuah properti dipilih.
-#Diadaptasi (sedikit sekali) dari Shane Lynn, 14-01-2014. http://www.shanelynn.ie/
-
-plotHeatMap <- function(som_model, data, variable=0){    
-#Di Mac, ini membutuhkan penginstalan XQuartz yang berfungsi. Apapun itu.
-  
-  require(dummies)
-  require(kohonen)
-  terraincolors
-  
-  interactive <- TRUE
-  
-  while (interactive == TRUE){
-    
-    if (variable == 0){
-      #tampilkan jendela interaktif.
-      color_by_var <- select.list(names(data), multiple=FALSE,
-                                  graphics=TRUE, 
-                                  title="Pilih variabel untuk mewarnai peta.")
-     #periksa apakah pengguna sudah selesai.
-      if (color_by_var == ""){ #jika pengguna menekan Batal - kami keluar dari fungsi
-      
-        return(TRUE)
-      }
-      interactive <- TRUE
-      color_variable <- data.frame(data[, color_by_var])
-      
-    } else {
-      color_variable <- data.frame(data[, variable])
-      color_by_var <- names(data)[variable]
-      interactive <- FALSE
-    }
-    
-    #jika variabel yang dipilih adalah string atau faktor -
-    #Dapatkan level dan minta pengguna untuk memilih mana yang mereka suka.
-    
-    if (class(color_variable[,1]) %in% c("character", "factor", "logical")){
-      #ingin menyebarkan ini ke faktor dummy - tetapi warnai dengan salah satunya.
-      temp_data <- dummy.data.frame(color_variable, sep="_")
-      chosen_factor <- select.list(names(temp_data), 
-                                   multiple=FALSE,
-                                   graphics=TRUE, 
-                                   title="Pilih tingkat variabel untuk pewarnaan")
-      color_variable <- temp_data[, chosen_factor]
-      rm(temp_data, chosen_factor)
-      color_by <- color_variable
-    } else {      
-      #impute the missing values with the mean.
-      color_variable[is.na(color_variable[,1]),1] <- mean(color_variable[,1], na.rm=TRUE)
-      #color_by <- capVector(color_variable[,1])
-      #color_by <- scale(color_by)  
-      color_by <- color_variable[,1]
-    }
-    unit_colors <- aggregate(color_by, by=list(som_model$unit.classif), FUN=mean, simplify=TRUE)
-    plot(som_model, type = "property", property=unit_colors[,2], main=color_by_var, palette.name=terraincolors, shape = "straight")    
-  }
-}
-
-par(mfrow=c(2,2)) #Atur matriks agar cocok dengan tidak ada properti untuk dibandingkan.
-```
-## CLUSTERING DI ATAS SOM
-
-Sekarang untuk pengelompokan. Kami mengelompokkan kode, bukan unit. Idenya adalah (seperti yang saya pahami) dengan menggunakan SOM kita dapat membuat materi yang sangat kompleks menjadi relatif sederhana sehingga cocok untuk pendekatan yang lebih mudah seperti pengelompokan hierarkis atau k-means. Pilihannya adalah lebih bergantung pada output SOM, yang awalnya dipandu oleh "punggungan" di matriks-U (jarak tetangga), tetapi selanjutnya juga oleh plot properti.
-
-### pengelompokan k-mean
-
-##### Menilai jumlah cluster yang sesuai
-
-```{r}
-par(mfrow=c(1,1)) # kembali ke satu petak
-clusterdata <- getCodes(iris.som)
-wss <- (nrow(clusterdata)-1)*sum(apply(clusterdata,2,var))
-for (i in 1:15) wss[i] <- sum(kmeans(clusterdata,
-                                     centers=i)$withinss) #i berkisar dari 1 hingga no node -1...
-par(mar=c(5.1,4.1,4.1,2.1)) #par menyetel atau menyesuaikan parameter plotting. Tidak selalu diperlukan. "mar" = margin.
-plot(1:15, wss, type="b", xlab="Jumlah cluster", #match i
-     ylab="Dalam kelompok jumlah kuadrat", main="Di dalam cluster sum of squares (WCSS)")
-```
-
-##### Kelompokkan dan laporkan hasil ke kumpulan data asli
-
-```{r}
-set.seed(33) #for reproducability
-fit_kmeans <- kmeans(clusterdata[,1:4], 3) #3 clusters are used, as indicated by the wss development.
-cl_assignmentk <- fit_kmeans$cluster[iris.som$unit.classif] #we have 100 (since grid=10*10) codes with asigned clusters,
-#but we have 149 units. The above is to assign units to clusters based on their class-id (code-id) in the SOM model.
-iris_unique$clustersKm <- cl_assignmentk #back to original data.
-```
-
-### Pengelompokan aglomeratif (bottom up) hirarkis (HAC)
-##### Cluster dan nilai no cluster yang sesuai, potong cluster menjadi k grup dan laporkan hasilnya ke dataset asli
-
-```{r}
-#2a. Create distance matrix
-DistanceM <- dist(clusterdata[,1:4], method = "euclidean") #create the distance matrix
-fit_hac <- hclust(DistanceM, method="ward.D2") #fit the distances. "D2", since "DistanceM" is not squared.
-plot(fit_hac) #display dendrogram. To me, it looks like a 5 or 6 cluster solution.
-#in my world 3-5 clusters
-HACgroups <- cutree(fit_hac, k=3) # cut tree into k clusters
-# draw dendrogram with red borders around the 6 clusters 
-rect.hclust(fit_hac, k=3, border="grey")
-```
-
-```{r}
-cl_assignmenth <- HACgroups[iris.som$unit.classif] #we have 100 (since grid=10*10) codes with asigned clusters,
-#but we have 149 units. The above is to assign units to clusters based on their class-id (code-id) in the SOM model.
-iris_unique$clustersHac <- cl_assignmenth #back to original data.
+peta <- cutree(hclust(dist(som.wines$codes[[1]])),5)
+plot(peta)
+plot(som.wines,type="codes",bgcol=rainbow(5)[peta])
 ```
 
 

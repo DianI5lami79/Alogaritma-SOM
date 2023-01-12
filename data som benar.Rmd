@@ -1,14 +1,15 @@
 ---
-title: "Algoritma SOM"
+title: "My Document"
+author: "Deden Istiawan-Institut Teknologi Statistika dan Bisnis Muhammadiyah"
 date: "`r Sys.Date()`"
-author: Dian Islamiati Dahlan-Institut Teknologi Statistika dan Bisnis Muhammadiyah
-output:
-  rmdformats::downcute:
-    self_contained: true
-    thumbnails: true
-    lightbox: true
-    gallery: false
-    highlight: tango
+output: 
+  html_document:
+    theme: flatly
+    higlight: zenburn
+    toc: true
+    toc_float:
+      collapsed: true
+    df_print: paged
 bibliography: references.bib
 ---
 
@@ -29,114 +30,87 @@ Gagasan mengenai SOM pertama kali dicetuskan oleh Teuvo Kohonen, seorang penelit
 
 # TAHAPAN ALGORITMA SELF ORGANIZING MAP
 
-1. Mengambil data dari beberapa data iris
+ 1. Mengambil data dari beberapa data iris
  2. Inisialisasi	bobot	input	dan	aoutput	den
- 3. Menghitung	Jarak	D(j)	antara	vector	input	dan  output dengan rumus              𝐷_((𝑗) )=∑(𝑖=0)^𝑛〖(𝑤_𝑖𝑗−𝑥_𝑖)²〗(1)
- 4. Mencari nilai terkecil dari seluruh bobot D(j). Index  dari bobot D(j) yang paling   kecil disebut winning  neuron.
+ 3. Menghitung	Jarak	D(j)	antara	vector	input	dan  output dengan rumus                  𝐷_((𝑗) )=∑(𝑖=0)^𝑛〖(𝑤_𝑖𝑗−𝑥_𝑖)²〗(1)
+ 4. Mencari nilai terkecil dari seluruh bobot D(j). Index  dari bobot D(j) yang paling      kecil disebut winning  neuron.
  5. Memperbarui setiap bobot Wij dengan  menggunakan rumus :
-wij(𝑏𝑎𝑟𝑢) = wij (𝑙𝑎𝑚𝑎) + 𝑎[xi − wij (𝑙𝑎𝑚𝑎)]  
- 6. Modifikasi parameter learning rate (α) Untuk  iterasi kedua, memperbarui (α) =0,3 dan bobot  
-  7. Mengulangi Lagkah 6-7 hingga mencapai iterasi.  Maksimal kondisi pemberhentian	wij	hanya  berubah sedikit saja, berhenti iterasi sudah  mencapai konvergen sehingga dapat di hentikan.
+    wij(𝑏𝑎𝑟𝑢) = wij (𝑙𝑎𝑚𝑎) + 𝑎[xi − wij (𝑙𝑎𝑚𝑎)]  
+ 6. Modifikasi parameter learning rate (α) Untuk  iterasi kedua, memperbarui (α) =0,3       dan bobot  
+ 7. Mengulangi Lagkah 6-7 hingga mencapai iterasi.  Maksimal kondisi pemberhentian	wij	    hanya  berubah sedikit saja, berhenti iterasi sudah  mencapai konvergen sehingga        dapat di hentikan.
 
 # EKSPERIMEN SELF ORGANIZING MAP
 
-
-## PERSIAPAN
-
-#### Paket dan data
+#### study Kasus
 ```{r warning=FALSE}
-library(kohonen) 
-library(ggplot2) 
-library(GGally) 
-library(RColorBrewer) 
-
-rm(list = ls())
-library(readxl)
-Data_penguin <- read_excel("Data penguin.xlsx")
-View(Data_penguin)
-```
-#### Palet
-
-##### Palet yang bisa kita gunakan nanti.
-
-```{r}
-
-contrast <- c("#FA4925", "#22693E", "#D4D40F", "#2C4382", "#F0F0F0", "#3D3D3D") #milikku, pasangan yang kontras
-kindofpretty2 <- c("#B39B66", "#3B3828", "#FAE6B9", "#F2F2F2", "#86BA9F", "#135E1F", "#FFF70A", "#FFB10A", "#0498BD", "#FF780A") #my own
-kindofpretty <- c("#B39B66", "#3B3828", "#FAE6B9", "#F2F2F2", "#F58B00", "#F5D800", "#7185A3", "#786187") #milikku
-#atau tentukan palet menggunakan RColorBrewer:
+library(class)
+library(MASS)
+library(kohonen)
+library(ggplot2)
 ```
 
 ```{r}
-display.brewer.all() 
+data("iris")
+View(iris)
 ```
 ```{r}
-#dan kemudian, misalnya:
-cols <- brewer.pal(10, "Paired")
-#Demikian pula, tetapi fungsi warna yang akan dipanggil dari dalam fungsi lain. Mudah diubah menjadi pelangi, dll.
-terraincolors <- function(n, alpha = 1) {
-  terrain.colors(n, alpha=alpha)[n:1]
-}
+scale(iris[,-5])
+head(scale(iris[,-5]))
 ```
-## Menjelaskan Data
-
 ```{r}
-#menjelaskan data
-summary(Data_penguin)
+dim(iris)
+```
+```{r}
+str(iris)
+```
+```{r}
+grid <- somgrid(xdim=5 , ydim=5 , topo = "hexagonal")
 ```
 
-
-```{r}
-#Tetapkan atribut untuk dapat mengklasifikasikan variabel (bukan pengamatan) yang kemudian dapat diselidiki menggunakan GGally.
-attr(Data_penguin ,'Culmen.Length') <- c("Culmen.Length ", "Culmen.Depth")
-attr(Data_penguin ,'Flipper.Length') <- c("Flipper.Length", "Body.Mass")
-str(attributes(Data_penguin)) 
+```{r warning=FALSE}
+som.iris <- som(as.matrix(iris[,-5]), grid = somgrid(xdim = 4, ydim = 4, topo="hexagonal"))
 ```
 
 ```{r}
-# Selanjutnya, lihat korelasi dalam menggunakan ggpairs.
-ggpairs(Data_penguin, title = "dalam semua data")
-```
-
-```{r}
-# Kemudian, lihat korelasi antar menggunakan ggpairs.
-ggduo(
-  Data_penguin, 
-  types = list(continuous = "smooth_lm"),
-  title = "Korelasi antara variabel culmen.Length dan Fliper.Length",
-  xlab = "culmen.Length",
-  ylab = "Fliper.Length"
-)
-```
-
-
-## Latihan Data
-
-
-```{r}
-#scale data
-Data_penguin.sc = scale_alpha(Data_penguin[, 1:4])#Levels/Factors tidak dapat diskalakan... Tetapi digunakan dalam SOM prediktif menggunakan xyf. Nanti. 
-#bangun jaringan
-Data_penguin.grid = somgrid(xdim = 10, ydim=10, topo="hexagonal", toroidal = TRUE) #gridsize kira-kira 5-10 sample/node. Heksagonal lebih disukai (lebih banyak tetangga).
-#Oleh karena itu, 10*10 adalah petak yang terlalu besar saat n=342. Tapi kami akan membahasnya di sini untuk tujuan ilustrasi.
-#Dalam peta toroidal, batas di tepi hanya akan ditampilkan di sisi atas dan kanan untuk menghindari batas ganda.
-```
-
-Peta toroidal memiliki bentuk cincin renang dan pada dasarnya bekerja dengan gaya seperti PacMan - jika Anda melewati batas, Anda akan berakhir di ujung peta yang berlawanan.
-
-```{r}
-# membangun model
-set.seed(33) #untuk reproduktifitas
-Data_penguin_som<- som(Data_penguin.sc, grid=Data_penguin.grid, rlen=700, alpha=c(0.05,0.01), keep.data = TRUE)
+str(som.iris)
 ```
 ```{r}
-summary(Data_penguin.som)
+plot(som.iris, type="mapping")
 ```
+```{r}
+som.iris$grid$pts
+```
+```{r}
+som.iris$unit.classif
+```
+```{r}
+plot(som.iris)
+```
+```{r}
+som.iris$codes[[1]]
+```
+```{r}
+dist(som.iris$codes[[1]])
+hclust(dist(som.iris$codes[[1]]))
+```
+```{r}
+peta <- cutree(hclust(dist(som.iris$codes[[1]])),5)
+plot(peta)
+plot(som.iris,type="codes",bgcol=rainbow(5)[peta])
+```
+
+
 
 # REFRENSI
-1.https://algorit.ma/blog/self-organizing-maps-som-2022/
-2.https://www.researchgate.net/publication/331741192_Self_Organizing_MapsSOM_untuk_Pengelompokkan_Jurusan_di_SMK
-3.https://www.kaggle.com/code/parulpandey/penguin-dataset-the-new-iris/notebook
+
+
+
+
+
+
+
+
+
 
 
 
