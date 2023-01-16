@@ -24,26 +24,27 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 # ALGORITMA SELF ORGANIZING MAP
 
-Self-organizing maps (SOM) merupakan suatu jenis artificial neural network yang dilatih dengan metode unsupervised learning. Jaringan ini mampu menghasilkan sebuah representasi terpisah atas ruang input sampel pelatihan dengan dimensi rendah (biasanya dua dimensi). Representasi tersebut kemudian disebut sebagai “map”. SOM juga merupakan metode untuk melakukan pengurangan dimensi pada sampel yang dilatih.
+Self-Organizing Map (SOM) atau sering disebut topology-preserving map pertama kali diperkenalkan oleh Teuvo Kohonen pada tahun 1996. SOM merupakan salah satu teknik dalam Neural Network yang bertujuan untuk melakukan visualisasi data dengan cara mengurangi dimensi data melalui penggunaan self-organizing neural networks sehingga manusia dapat mengerti high-dimensional data yang dipetakan dalam bentuk low-dimensional data. Metode pembelajaran yang digunakan SOM adalah tanpa bimbingan dari suatu data input-target atau unsupervised learning yang mengasumsikan sebuah topologi yang terstruktur menjadian unit-unit kelas/cluster (Kohonen, 1989 dan Fausett, 1993).
 
-Gagasan mengenai SOM pertama kali dicetuskan oleh Teuvo Kohonen, seorang peneliti di bidang Ilmu Komputer. Kohonen menciptakan SOM berbeda dari ANN jenis lainnya. Sebab, SOM menerapkan metode pembelajaran kompetitif alih-alih pembelajaran koreksi kesalahan. Jaringan ini juga menerapkan fungsi neighbourhood untuk melestarikan sifat topologi dari ruang input.
+Pada algoritma SOM, vektor bobot untuk setiap unit cluster berfungsi sebagai contoh dari input pola yang terkait dengan cluster itu. Selama proses self-organizing,  cluster satuan yang bobotnya sesuai dengan pola vektor input yang paling dekat (biasanya, kuadrat dari jarak Euclidean minimum) dipilih sebagai pemenang. Unit pemenang dan unit tetangganya (dalam pengertian topologi dari unit cluster ) terus memperbarui bobot merek (Fausett, 1993). Setiap output akan bereaksi terhadap pola input tertentu sehingga hasil Kohonen SOM akan menunjukkan adanya kesamaan ciri antar anggota dalam cluster yang sama.
+
+Dalam jaringan SOM, neuron target tidak diletakkan dalam sebuah baris seperti layaknya model JST yang lain. Neuron target diletakkan dalam dua dimensi yang bentuk/topologinya dapat diatur. Topologi yang berbeda akan menghasilkan neuron sekitar neuron pemenang yang berbeda sehingga bobot yang dihaslkan juga akan berbeda. Pada SOM, perubahan bobot tidak hanya dilakukan pada bobot garis yang terhubung ke neuron pemenang saja, tetapi juga pada bobot garis ke neuron-neuron di sekitarnya. neuron di sekitar neuron pemenang ditentukan berdasarkan jaraknya dari neuron pemenang.
 
 # TAHAPAN ALGORITMA SELF ORGANIZING MAP
 
  1. Mengambil data dari beberapa data iris
  2. Inisialisasi	bobot	input	dan	aoutput	den
- 3. Menghitung	Jarak	D(j)	antara	vector	input	dan  output dengan rumus                  𝐷_((𝑗) )=∑(𝑖=0)^𝑛〖(𝑤_𝑖𝑗−𝑥_𝑖)²〗(1)
- 4. Mencari nilai terkecil dari seluruh bobot D(j). Index  dari bobot D(j) yang paling      kecil disebut winning  neuron.
+ 3. Menghitung	Jarak	D(j)	antara	vector	input	dan  output dengan rumus                  𝐷_((𝑗)         )=∑(𝑖=0)^𝑛〖(𝑤_𝑖𝑗−𝑥_𝑖)²〗(1)
+ 4. Mencari nilai terkecil dari seluruh bobot D(j). Index  dari bobot D(j) yang paling      kecil disebut     winning  neuron.
  5. Memperbarui setiap bobot Wij dengan  menggunakan rumus :
     wij(𝑏𝑎𝑟𝑢) = wij (𝑙𝑎𝑚𝑎) + 𝑎[xi − wij (𝑙𝑎𝑚𝑎)]  
  6. Modifikasi parameter learning rate (α) Untuk  iterasi kedua, memperbarui (α) =0,3       dan bobot  
- 7. Mengulangi Lagkah 6-7 hingga mencapai iterasi.  Maksimal kondisi pemberhentian	wij	    hanya  berubah sedikit saja, berhenti iterasi sudah  mencapai konvergen sehingga        dapat di hentikan.
+ 7. Mengulangi Lagkah 6-7 hingga mencapai iterasi.  Maksimal kondisi pemberhentian	wij	    hanya            berubah sedikit saja, berhenti iterasi sudah  mencapai konvergen sehingga        dapat di hentikan.
 
 # EKSPERIMEN SELF ORGANIZING MAP
 
-#### study Kasus
-
-1. Aktifkan package Class , MASS , dan Kohonen dengan syntax seperti berikut.
+### PERSIAPAN
+#### Paket dan data
 
 ```{r warning=FALSE}
 library(class)
@@ -51,7 +52,46 @@ library(MASS)
 library(kohonen)
 ```
 
-2. Memanggil data iris dalam R dengan syntax seperti berikut.
+
+```{r warning=FALSE}
+library(ggplot2) # plot
+library(GGally) # Plot
+library(RColorBrewer) # Untuk Warna yang di gunakan
+```
+
+### MENJELASKAN DATA & MENCARI KORELASI
+
+```{r}
+# pertama tama panggil data
+summary(iris)
+```
+Mengelompokan data iris dalam beberapa kelompok
+
+```{r}
+# Tetapkan atribut untuk dapat mengklasifikasikan variabel (bukan pengamatan) yang kemudian dapat diselidiki menggunakan GGall ( Plot)
+attr(iris,'Sepal') <- c("Sepal.Length", "Sepal.Width")
+attr(iris,'Petal') <- c("Petal.Length", "Petal.Width")
+str(attributes(iris))
+```
+ lalu Tentukan kelompok variabel berdasarkan atribut
+```{r}
+(SepalVar <- attr(iris, "Sepal"))
+```
+```{r}
+(PetalVar <- attr(iris, "Petal"))
+```
+dan selanjutnya Mencari korelasi dari data iris dengan mengunakan syntax berikut
+```{r}
+ggpairs(iris, title = "dalam semua dataset")
+```
+
+korelasi dikatakan baik jika nilainya mendekati 1 atau -1.
+
+maka dari hasil korelasi di atas dapat di tuliskan bahwa korelasi antara sepal.Leghth dagan sepal.Width adalah -0,118 jadi bisa di katakan korelasi nya lemah berbeda dengan nilai korelasi antara sepal.Width dan Petal.length adalah 0,872 itu bisa dikatakan baik dan seterusnya. dan sampai nilai korelasi aantara Petal.Lenght dan Petal Widht adalah 0,963 itu di katakan sanggat baik karena nilainya mendekati 1.
+
+### STUDY KASUS
+
+1. Memanggil data iris  dengan syntax seperti berikut.
 
 ```{r}
 data("iris")
@@ -60,14 +100,15 @@ View(iris)
 
 Berdasarkan data iris diatas dapat diketahui bahwa terdapat 5 variabel yaitu Sepal.Length, Sepal.Width, Petal.Length, Petal.Width dan species(sebagai label)
 
-3. Melakukan standarisasi pada Variabel species(label)
+2. Melakukan standarisasi atau penghapusan pada Variabel species(label)
 
 ```{r}
 scale(iris[,-5])
 head(scale(iris[,-5]))
 ```
 
-4. Melihat dimensi dari data iris dengan syntax seperti berikut.
+
+3. Melihat dimensi dari data iris dengan syntax seperti berikut.
 
 ```{r}
 dim(iris)
@@ -75,29 +116,31 @@ dim(iris)
 
 Berdasarkan hasil output diatas dapat diketahui bahwa dimensi data yang ada yaitu 150 baris dan 5 kolom.
 
-5. Melihat struktur dari data iris dengan syntax seperti berikut.
+4. Melihat struktur dari data iris dengan syntax seperti berikut.
 ```{r}
 str(iris)
 ```
-6. Kemudian membuat kelompok atau clustering dari data iris dengan syntax berikut:
+### PENGELOMPOKAN
+
+1. membuat kelompok atau clustering dari data iris dengan syntax berikut:
 
 ```{r}
-grid <- somgrid(xdim=5 , ydim=5 , topo = "hexagonal")
+grid<- somgrid(xdim=5 , ydim=5 , topo = "hexagonal")
 ```
 
-7. Selanjutnya melakukan perintah SOM dari data iris dengan syntax seperti berikut.
+2. Kwmudian selanjutnya melakukan perintah SOM dari data iris dengan syntax seperti berikut.
 
 ```{r warning=FALSE}
 som.iris <- som(as.matrix(iris[,-5]), grid = somgrid(xdim = 4, ydim = 4, topo="hexagonal"))
 ```
 
-8. Melihat struktur data setelah adanya cara kerja SOM pada data iris dengan syntax seperti berikut.
+3. Melihat struktur data setelah adanya cara kerja SOM pada data iris dengan syntax seperti berikut.
 
 ```{r}
 str(som.iris)
 ```
-
-9. Melihat hasil plot dari data dengan syntax seperti berikut.
+### PLOT
+Melihat hasil plot dari data dengan syntax seperti berikut.
 
 ```{r}
 plot(som.iris, type="mapping")
@@ -105,7 +148,8 @@ plot(som.iris, type="mapping")
 
 Berdasarkan hasil output diatas dapat diketahui bahwa dimensi dari letak gambar yaitu 4x4 maka terdapat sebanyak 16 lingkaran yang menyatakan data sudah terkumpul pada masing-masing lingkaran tersebut.
 
-10. Untuk mengetahui objek yang masuk didalam lingkaran maka menggunakan syntax seperti berikut.
+
+1. Untuk mengetahui objek yang masuk didalam lingkaran maka menggunakan syntax seperti berikut.
 
 ```{r}
 som.iris$grid$pts
@@ -113,7 +157,8 @@ som.iris$grid$pts
 
 Berdasarkan hasil output diatas dapat diketahui bahwa pada lingkaran pertama sumbu x bernilai 1.5 dan sumbu y bernilai 0.8660254 , pada lingkaran kedua sumbu x bernilai 2.5 dan sumbu y bernilai 0.8660254 dan seterusnya.
 
-11. Untuk melihat letak nomer objek berapa yang masuk dalam lingkaran maka digunakan syntax seperti berikut.
+
+2. Untuk melihat letak nomer objek berapa yang masuk dalam lingkaran maka digunakan syntax seperti berikut.
 
 ```{r}
 som.iris$unit.classif
@@ -121,7 +166,8 @@ som.iris$unit.classif
 
 Berdasarkan output diatas dapat diketahui bahwa objek nomer 1 masuk dalam lingkaran 9 , objek nomer 2 masuk dalam lingkaran 14 dan objek nomer 145 masuk dalam lingkaran 4.
 
-12. Kemudian melihat plot keseluruhan som.wines dengan syntax seperti berikut.
+
+3. Kemudian melihat plot keseluruhan som.wines dengan syntax seperti berikut.
 
 ```{r}
 plot(som.iris)
@@ -133,15 +179,16 @@ Berdasarkan plot diatas dapat diketahui bahwa terlihat nilai-nilai dari nomor ob
 
 
 
-13. Selanjutnya melihat hasil pengelompokkan dari beberapa objek didalam masing-masing lingkaran dengan syntax seperti berikut.
+4. Selanjutnya melihat hasil pengelompokkan dari beberapa objek didalam masing-masing lingkaran dengan syntax seperti berikut.
 
 ```{r}
 som.iris$codes[[1]]
 ```
 
-Berdasarkan hasil output diatas terdapat sebanyak 16 nilai dari 4 variabel. Nilai V1 dari Sepal.Length  adalah 5.404944  ,dari Sepal.Width sebesar 2.490191 , dan seterusnya sampai dengan V16.
+Berdasarkan hasil output diatas terdapat sebanyak 16 nilai dari 4 variabel. Nilai V1 dari Sepal.Length  adalah 5.404944 ,dari Sepal.Width sebesar 2.490191 , dan seterusnya sampai dengan V16.
 
-14. Melakukan pengelompokkan berdasarkan nilai codes menggunakan cluster hierarki dengan syntax seperti berikut.
+
+5. Melakukan pengelompokkan berdasarkan nilai codes menggunakan cluster hierarki dengan syntax seperti berikut.
 
 ```{r}
 dist(som.iris$codes[[1]])
@@ -150,7 +197,8 @@ hclust(dist(som.iris$codes[[1]]))
 
 Berdasarkan hasil diatas dapat diketahui bahwa pengelompokkan yang dilakukan dengan cluster hierarki menggunakan metode complete , dan menggunakan distance yaitu euclidean dengan objek sebanyak 16.
 
-15. Kemudian membuat plot hasil pengelompokkan dengan syntax seperti berikut.
+
+6. Kemudian membuat plot hasil pengelompokkan dengan syntax seperti berikut.
 
 ```{r}
 peta <- cutree(hclust(dist(som.iris$codes[[1]])),5)
@@ -158,6 +206,7 @@ plot(peta)
 plot(som.iris,type="codes",bgcol=rainbow(5)[peta])
 add.cluster.boundaries(som.iris,peta)
 ```
+
 
 Berdasarkan hasil plot diatas dapat diketahui bahwa hasil pengelompokkan dari 20 objek lingkaran menghasilkan 5 kelompok. Pada kelompok lingkaran berwarna hijau terdapat 3 objek, kelompok lingkaran berwarna merah terdapat 5 objek , kelompok lingkaran berwarna kuning terdapat 4 objek , kelompok lingkaran berwarna ungu terdapat 1 objek dan kelompok lingkaran berwarna biru terdapat 3 objek. dan Dengan adanya garis pembatas seperti hasil output diatas maka dapat dilihat dengan jelas bahwa pengelompokkan yang terdapat pada data iris dengan SOM yaitu 5 kelompok.
 
@@ -169,7 +218,13 @@ Berdasarkan hasil plot diatas dapat diketahui bahwa hasil pengelompokkan dari 20
 
 
 # REFRENSI
-1. https://medium.com/@16611130/penerapan-self-organizing-map-som-pada-r-menggunakan-data-wines-7c83130fc1a0
+1. https://medium.com/@16611130/penerapan-self-organizing-map-som-pada-r-menggunakan-data-wines-7c83130fc    1a0
+2. https://github.com/DianI5lami79/Alogaritma-SOM
+3. https://socs.binus.ac.id/2017/03/20/self-organizing-map-som/
+4. https://algorit.ma/blog/self-organizing-maps-som-2022/
+5. https://www.researchgate.net/publication/331741192_Self_Organizing_MapsSOM_untuk_Pengelompokkan_Jurusa    n_di_SMK
+
+
 
 
 

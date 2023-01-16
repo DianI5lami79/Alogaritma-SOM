@@ -135,9 +135,8 @@ peta <- cutree(hclust(dist(som.wines$codes[[1]])),5)
 plot(peta)
 plot(som.wines,type="codes",bgcol=rainbow(5)[peta])
 ```
+Berdasarkan hasil plot diatas dapat diketahui bahwa hasil pengelompokkan dari 25 objek lingkaran menghasilkan 5 kelompok. Pada kelompok lingkaran berwarna hijau terdapat 1 objek, kelompok lingkaran berwarna merah terdapat 8 objek , kelompok lingkaran berwarna kuning terdapat 5 objek , kelompok lingkaran berwarna ungu terdapat 5 objek dan kelompok lingkaran berwarna biru terdapat 6 objek.
 
 
 # REFRENSI
-1.https://algorit.ma/blog/self-organizing-maps-som-2022/
-2.https://www.researchgate.net/publication/331741192_Self_Organizing_MapsSOM_untuk_Pengelompokkan_Jurusan_di_SMK
-3.https://rpubs.com/loveb/som
+1. https://medium.com/@16611130/penerapan-self-organizing-map-som-pada-r-menggunakan-data-wines-7c83130fc1a0
